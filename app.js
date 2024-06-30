@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 
 // body parser configuration
 app.use(bodyParser.json());
-  app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (request, response, next) => {
   response.json({ message: "Hey! This is your server response!" });
@@ -81,7 +81,6 @@ app.post("/login", (request, response) => {
     // if email exists
     .then((user) => {
       // compare the password entered and the hashed password found
-      console.log('user', user)
       bcrypt
         .compare(request.body.password, user.password)
 
