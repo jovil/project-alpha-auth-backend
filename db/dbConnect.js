@@ -8,7 +8,7 @@ async function dbConnect() {
   // use mongoose to connect this app to our database on mongoDB using the DB_URL (connection string)
   mongoose
     .connect(
-      `mongodb+srv://jovilhiew:${urlEncodedPassword}@cluster0.naycgyd.mongodb.net/authDB?retryWrites=true&w=majority&appName=Cluster0`,{}
+      process.env.DB_URL,
     )
     .then(() => {
       console.log("Successfully connected to MongoDB Atlas!");
