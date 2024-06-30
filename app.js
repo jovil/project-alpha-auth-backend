@@ -81,6 +81,7 @@ app.post("/login", (request, response) => {
     // if email exists
     .then((user) => {
       // compare the password entered and the hashed password found
+      console.log('user', user)
       bcrypt
         .compare(request.body.password, user.password)
 
