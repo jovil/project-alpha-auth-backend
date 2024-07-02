@@ -1,10 +1,12 @@
 const express = require("express");
-const app = express();
+const cors = require("cors")
 const bodyParser = require('body-parser');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("./db/userModel");
+const User = require("./model/userModel");
+const Profile = require("./model/profileModel");
 const auth = require("./auth");
+const app = express();
 // require database connection
 const dbConnect = require("./db/dbConnect");
 
@@ -25,12 +27,17 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cors());
 // body parser configuration
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (request, response, next) => {
-  response.json({ message: "Hey! This is your server response!" });
+  User.find({}).then(data => {
+    response.json(data);
+  }).catch(error => {
+    response.status(408).json({ error });
+  });
   next();
 });
 
@@ -129,6 +136,17 @@ app.post("/login", (request, response) => {
     });
 });
 
+app.post("/uploads", async (request, response) => {
+  const body = request.body;
+  try {
+    const newImage = await Profile.create(body);
+    newImage.save();
+    response.status(201).json({ message: "Image uploaded" });
+  } catch (error) {
+    response.status(409).json({ message: error.message });
+  }
+});
+
 // free endpoint
 app.get("/free-endpoint", (request, response) => {
   response.json({ message: "You are free to access me anytime" });
@@ -136,7 +154,11 @@ app.get("/free-endpoint", (request, response) => {
 
 // authentication endpoint
 app.get("/auth-endpoint", auth, (request, response) => {
-  response.json({ message: "You are authorized to access me" });
+  Profile.find({}).then(data => {
+    response.json(data);
+  }).catch(error => {
+    response.status(408).json({ error });
+  });
 });
 
 module.exports = app;
