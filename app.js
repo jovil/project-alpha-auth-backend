@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -28,11 +27,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  cors({
-    origin: true,
-  })
-);
 // body parser configuration
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
