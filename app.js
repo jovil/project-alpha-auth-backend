@@ -28,15 +28,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Configure CORS to allow all origins
-const corsOptions = {
-  origin: true, // Allow all origins
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  optionsSuccessStatus: 204,
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: true,
+  })
+);
 // body parser configuration
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
