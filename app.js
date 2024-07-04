@@ -1,10 +1,11 @@
 const express = require("express");
-const cors = require("cors")
-const bodyParser = require('body-parser');
+const cors = require("cors");
+const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("./model/userModel");
 const Profile = require("./model/profileModel");
+const Post = require("./model/postModel");
 const auth = require("./auth");
 const app = express();
 // require database connection
@@ -29,15 +30,17 @@ app.use((req, res, next) => {
 
 app.use(cors());
 // body parser configuration
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", (request, response, next) => {
-  User.find({}).then(data => {
-    response.json(data);
-  }).catch(error => {
-    response.status(408).json({ error });
-  });
+  User.find({})
+    .then((data) => {
+      response.json(data);
+    })
+    .catch((error) => {
+      response.status(408).json({ error });
+    });
   next();
 });
 
@@ -93,9 +96,8 @@ app.post("/login", (request, response) => {
 
         // if the passwords match
         .then((passwordCheck) => {
-
           // check if password matches
-          if(!passwordCheck) {
+          if (!passwordCheck) {
             return response.status(400).send({
               message: "Passwords does not match",
               error,
@@ -147,6 +149,39 @@ app.post("/uploads", async (request, response) => {
   }
 });
 
+app.post("/create", (request, response) => {
+  const { email, title, description } = request.body;
+
+  Post.create({ email, title, description })
+    .then((posts) => {
+      console.log(posts);
+    })
+    .catch((error) => {
+      response.status(500).json({ error: error.message });
+    });
+});
+
+app.get("/posts", (request, response) => {
+  const { email } = request.query; // Get email from query parameters
+
+  if (!email) {
+    return response
+      .status(400)
+      .json({ error: "Email query parameter is required" });
+  }
+
+  Post.find({ email: email })
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((err) => {
+      console.error(err);
+      response
+        .status(500)
+        .json({ error: "An error occurred while retrieving posts" });
+    });
+});
+
 // free endpoint
 app.get("/free-endpoint", (request, response) => {
   response.json({ message: "You are free to access me anytime" });
@@ -154,11 +189,13 @@ app.get("/free-endpoint", (request, response) => {
 
 // authentication endpoint
 app.get("/auth-endpoint", auth, (request, response) => {
-  Profile.find({}).then(data => {
-    response.json(data);
-  }).catch(error => {
-    response.status(408).json({ error });
-  });
+  Profile.find({})
+    .then((data) => {
+      response.json(data);
+    })
+    .catch((error) => {
+      response.status(408).json({ error });
+    });
 });
 
 module.exports = app;
