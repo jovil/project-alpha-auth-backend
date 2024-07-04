@@ -28,7 +28,11 @@ dbConnect();
 //   next();
 // });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 console.log("1");
 // body parser configuration
 app.use(express.json());
