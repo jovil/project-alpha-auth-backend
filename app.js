@@ -28,7 +28,13 @@ dbConnect();
 //   next();
 // });
 
-app.use(cors());
+// Define the CORS options
+const corsOptions = {
+  credentials: true,
+  origin: "*",
+};
+
+app.use(cors(corsOptions));
 // body parser configuration
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
