@@ -34,6 +34,8 @@ app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.options("*", cors());
+
 app.get("/", (request, response, next) => {
   User.find({})
     .then((data) => {
