@@ -29,6 +29,7 @@ dbConnect();
 // });
 
 app.use(cors());
+console.log("1");
 // body parser configuration
 app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
