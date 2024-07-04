@@ -28,25 +28,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Define allowed origins
-const allowedOrigins = [
-  "https://project-alpha-auth-db-app-b623d85e31d2.herokuapp.com",
-  "http://localhost:3000",
-];
-
+// Configure CORS to allow all origins
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin, like mobile apps or curl requests
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      // If the origin is in the allowed origins list
-      callback(null, true);
-    } else {
-      // If the origin is not in the allowed origins list
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: true, // Allow all origins
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   optionsSuccessStatus: 204,
