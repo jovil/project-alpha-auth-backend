@@ -154,7 +154,7 @@ app.post("/create", (request, response) => {
 
   Post.create({ email, title, description })
     .then((posts) => {
-      console.log(posts);
+      response.json(posts);
     })
     .catch((error) => {
       response.status(500).json({ error: error.message });
