@@ -162,15 +162,7 @@ app.post("/create", (request, response) => {
 });
 
 app.get("/posts", (request, response) => {
-  const { email } = request.query; // Get email from query parameters
-
-  if (!email) {
-    return response
-      .status(400)
-      .json({ error: "Email query parameter is required" });
-  }
-
-  Post.find({ email: email })
+  Post.find({})
     .then((result) => {
       response.json(result);
     })
