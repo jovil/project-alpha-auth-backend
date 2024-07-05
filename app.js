@@ -21,11 +21,9 @@ app.use(
 );
 
 // body parser configuration
-app.use(express.json());
 app.use(bodyParser.json({ limit: "10mb" }));
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.options("*", cors());
 
 app.get("/", (request, response, next) => {
   User.find({})
@@ -166,11 +164,6 @@ app.get("/posts", (request, response) => {
         .status(500)
         .json({ error: "An error occurred while retrieving posts" });
     });
-});
-
-// free endpoint
-app.get("/free-endpoint", (request, response) => {
-  response.json({ message: "You are free to access me anytime" });
 });
 
 // authentication endpoint
