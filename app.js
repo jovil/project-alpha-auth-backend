@@ -142,9 +142,9 @@ app.post("/uploads", async (request, response) => {
 });
 
 app.post("/create", (request, response) => {
-  const { email, title, description } = request.body;
+  const { email, image, caption } = request.body;
 
-  Post.create({ email, title, description })
+  Post.create({ email, image, caption })
     .then((posts) => {
       response.json(posts);
     })
