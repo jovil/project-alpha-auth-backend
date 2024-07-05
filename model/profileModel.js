@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const ProfileSchema = new mongoose.Schema({
   email: String,
-  image: String,
+  avatar: String,
 });
 
 module.exports =
