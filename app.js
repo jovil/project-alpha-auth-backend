@@ -177,6 +177,7 @@ const uploadFileToS3 = async (file) => {
 const savePostToDatabase = async (post, fileUrl) => {
   // Example using Mongoose with MongoDB
   const newPost = new Post({
+    user: post._id,
     email: post.email,
     caption: post.caption,
     fileUrl: fileUrl, // S3 file URL
@@ -207,28 +208,36 @@ app.post("/create", upload.single("image"), async (request, response) => {
   }
 });
 
-app.get("/posts", (request, response) => {
-  Post.find({})
-    .then((result) => {
-      response.json(result);
-    })
-    .catch((err) => {
-      console.error(err);
-      response
-        .status(500)
-        .json({ error: "An error occurred while retrieving posts" });
-    });
+app.get("/posts", async (request, response) => {
+  try {
+    Post.find({})
+      .then((result) => {
+        response.json(result);
+      })
+      .catch((err) => {
+        console.error(err);
+        response
+          .status(500)
+          .json({ error: "An error occurred while retrieving posts" });
+      });
+  } catch (error) {
+    console.log("error", error);
+  }
 });
 
 // authentication endpoint
-app.get("/auth-endpoint", auth, (request, response) => {
-  Profile.find({})
-    .then((data) => {
-      response.json(data);
-    })
-    .catch((error) => {
-      response.status(408).json({ error });
-    });
+app.get("/auth-endpoint", auth, async (request, response) => {
+  try {
+    const userId = request.user.userId;
+    const profile = await Profile.findOne({ user: userId });
+
+    if (!profile)
+      return response.status(404).json({ message: "Profile not found" });
+
+    response.json(profile);
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
 });
 
 module.exports = app;
