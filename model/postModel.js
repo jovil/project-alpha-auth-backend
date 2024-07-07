@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const postSchema = mongoose.Schema({
   email: String,
-  image: String,
+  fileUrl: String,
   caption: String,
 });
 
