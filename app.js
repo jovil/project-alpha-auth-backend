@@ -122,6 +122,7 @@ app.post("/login", (request, response) => {
 
           //   return success response
           response.status(200).send({
+            _id: user._id,
             message: "Login Successful",
             email: user.email,
             token,
@@ -145,11 +146,17 @@ app.post("/login", (request, response) => {
 });
 
 app.post("/uploads", async (request, response) => {
-  const body = request.body;
+  const { _id, email, avatar } = request.body;
   try {
-    const newImage = await Profile.create(body);
-    newImage.save();
-    response.status(201).json({ message: "Image uploaded" });
+    const newProfile = await Profile.create({
+      user: _id,
+      email: email,
+      avatar: avatar,
+    });
+    await newProfile.save();
+    response
+      .status(201)
+      .json({ message: "Profile created successfully", newProfile });
   } catch (error) {
     response.status(409).json({ message: error.message });
   }
