@@ -4,11 +4,18 @@ const compression = require("compression");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const AWS = require("aws-sdk");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const User = require("./model/userModel");
 const Profile = require("./model/profileModel");
 const Post = require("./model/postModel");
 const auth = require("./auth");
+const timestamp = Date.now();
+
 const app = express();
+const s3 = new AWS.S3();
+
 // require database connection
 const dbConnect = require("./db/dbConnect");
 
@@ -20,6 +27,10 @@ app.use(
     origin: "*",
   })
 );
+
+// Set up Multer
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 // compress responses
 app.use(compression());
@@ -144,16 +155,49 @@ app.post("/uploads", async (request, response) => {
   }
 });
 
-app.post("/create", (request, response) => {
-  const { email, image, caption } = request.body;
+const uploadFileToS3 = async (file) => {
+  const params = {
+    Bucket: "jov-project-alpha-bucket",
+    Key: `${uuidv4()}-${timestamp}${file.originalname}`,
+    Body: file.buffer,
+    ContentType: file.mimetype,
+  };
 
-  Post.create({ email, image, caption })
-    .then((posts) => {
-      response.json(posts);
-    })
-    .catch((error) => {
-      response.status(500).json({ error: error.message });
+  const uploadResult = await s3.upload(params).promise();
+  return uploadResult.Location; // S3 file URL
+};
+
+const savePostToDatabase = async (post, fileUrl) => {
+  // Example using Mongoose with MongoDB
+  const newPost = new Post({
+    email: post.email,
+    caption: post.caption,
+    fileUrl: fileUrl, // S3 file URL
+    // other fields
+  });
+
+  await newPost.save();
+  return newPost;
+};
+
+app.post("/create", upload.single("image"), async (request, response) => {
+  try {
+    const file = request.file;
+    const post = JSON.parse(request.body.post);
+
+    // Upload file to S3 and get the URL
+    const fileUrl = await uploadFileToS3(file);
+
+    // Save post metadata to the database
+    const savedPost = await savePostToDatabase(post, fileUrl);
+
+    response.send({
+      message: "File and post saved successfully",
+      post: savedPost,
     });
+  } catch (error) {
+    response.status(500).send(error);
+  }
 });
 
 app.get("/posts", (request, response) => {
