@@ -10,6 +10,7 @@ const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const User = require("./model/userModel");
 const Profile = require("./model/profileModel");
 const Post = require("./model/postModel");
+const Product = require("./model/productModel");
 const auth = require("./auth");
 const timestamp = Date.now();
 
@@ -174,6 +175,45 @@ const uploadFileToS3 = async (file) => {
   return uploadResult.Location; // S3 file URL
 };
 
+const saveProductToDatabase = async (product, fileUrl) => {
+  // Example using Mongoose with MongoDB
+  const newProduct = new Product({
+    user: product._id,
+    productName: product.productName,
+    productDescription: product.productDescription,
+    productPrice: product.price,
+    fileUrl: fileUrl, // S3 file URL
+    // other fields
+  });
+
+  await newProduct.save();
+  return newProduct;
+};
+
+app.post(
+  "/create/product",
+  upload.single("image"),
+  async (request, response) => {
+    try {
+      const file = request.file;
+      const product = JSON.parse(request.body.product);
+
+      // Upload file to S3 and get the URL
+      const fileUrl = await uploadFileToS3(file);
+
+      // Save product metadata to the database
+      const savedProduct = await saveProductToDatabase(product, fileUrl);
+
+      response.send({
+        message: "File and product saved successfully",
+        post: savedProduct,
+      });
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  }
+);
+
 const savePostToDatabase = async (post, fileUrl) => {
   // Example using Mongoose with MongoDB
   const newPost = new Post({
@@ -211,6 +251,25 @@ app.post("/create", upload.single("image"), async (request, response) => {
 app.get("/posts", async (request, response) => {
   try {
     Post.find({})
+      .then((result) => {
+        response.json(result);
+      })
+      .catch((err) => {
+        console.error(err);
+        response
+          .status(500)
+          .json({ error: "An error occurred while retrieving posts" });
+      });
+  } catch (error) {
+    console.log("error", error);
+  }
+});
+
+app.get("/products/:profileId", async (request, response) => {
+  try {
+    const { profileId } = request.params;
+    console.log("profileId", profileId);
+    Product.find({ user: profileId })
       .then((result) => {
         response.json(result);
       })
