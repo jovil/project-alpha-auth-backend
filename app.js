@@ -240,4 +240,19 @@ app.get("/auth-endpoint", auth, async (request, response) => {
   }
 });
 
+app.get("/profile/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const profile = await Profile.findOne({ user: userId });
+
+    if (!profile) {
+      return response.status(404).json({ message: "Profile not found" });
+    }
+
+    response.json(profile);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = app;
