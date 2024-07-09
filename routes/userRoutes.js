@@ -41,4 +41,15 @@ router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   }
 });
 
+router.get("/user/:userId", (request, response) => {
+  const { userId } = request.params;
+  User.findById(userId)
+    .then((data) => {
+      response.json(data);
+    })
+    .catch((error) => {
+      response.status(408).json({ error });
+    });
+});
+
 module.exports = router;
