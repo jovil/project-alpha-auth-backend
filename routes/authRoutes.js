@@ -102,6 +102,7 @@ router.post("/login", (request, response) => {
             email: user.email,
             userName: user.userName,
             hasPosted: user.hasPosted,
+            hasProducts: user.hasProducts,
             token,
           });
         })

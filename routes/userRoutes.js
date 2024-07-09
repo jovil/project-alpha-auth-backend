@@ -26,7 +26,26 @@ router.post("/update-hasPosted/:userId", async (request, response) => {
       return response.status(404).json({ message: "User not found" });
     }
 
-    console.log("Updated user:", user);
+    console.log("Updated hasPosted:", user);
+    response.json(user);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/update-hasProducts/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const { hasProducts } = request.body;
+    const user = await User.findByIdAndUpdate(userId, {
+      hasProducts: hasProducts,
+    });
+
+    if (!user) {
+      return response.status(404).json({ message: "User not found" });
+    }
+
+    console.log("Updated hasProducts:", user);
     response.json(user);
   } catch (error) {
     response.status(500).json({ error: error.message });
