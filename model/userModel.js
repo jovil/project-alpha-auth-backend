@@ -6,13 +6,16 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide an Email!"],
     unique: [true, "Email Exist"],
   },
-
   password: {
     type: String,
     required: [true, "Please provide a password!"],
     unique: false,
   },
-
+  userName: {
+    type: String,
+    required: [true, "Please provide a username!"],
+    unique: true,
+  },
   hasProducts: { type: Boolean, default: false },
 });
 
