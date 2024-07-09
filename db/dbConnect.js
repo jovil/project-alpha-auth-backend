@@ -8,6 +8,7 @@ async function dbConnect() {
     .connect(`${process.env.DATABASE_URL}`)
     .then(() => {
       console.log("Successfully connected to MongoDB Atlas!");
+      console.log("Mongoose version:", mongoose.version);
     })
     .catch((error) => {
       console.log("Unable to connect to MongoDB Atlas!");
