@@ -70,14 +70,15 @@ router.post("/register", async (request, response) => {
 
 // login endpoint
 router.post("/login", (request, response) => {
+  const { email, password } = request.body;
   // check if email exists
-  User.findOne({ email: request.body.email })
+  User.findOne({ email })
 
     // if email exists
     .then((user) => {
       // compare the password entered and the hashed password found
       bcrypt
-        .compare(request.body.password, user.password)
+        .compare(password, user.password)
 
         // if the passwords match
         .then((passwordCheck) => {
@@ -104,6 +105,7 @@ router.post("/login", (request, response) => {
             _id: user._id,
             message: "Login Successful",
             email: user.email,
+            userName: user.userName,
             token,
           });
         })
