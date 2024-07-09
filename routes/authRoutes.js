@@ -24,7 +24,7 @@ router.post("/register", async (request, response) => {
     await newUser.save();
 
     // Create a profile for the new user
-    const newProfile = new Profile({ user: newUser._id, email });
+    const newProfile = new Profile({ user: newUser._id });
     await newProfile.save();
 
     console.log("New user created:", newUser);

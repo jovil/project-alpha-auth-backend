@@ -16,6 +16,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide a username!"],
     unique: true,
   },
+  avatar: String,
   hasProducts: { type: Boolean, default: false },
 });
 
