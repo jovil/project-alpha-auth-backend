@@ -58,7 +58,11 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
 router.get("/profile/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const profile = await Profile.findOne({ user: userId }).populate("user");
+    const profile = await Profile.findOne({ user: userId }).populate(
+      "user",
+      "avatar",
+      "userName"
+    );
 
     if (!profile) {
       return response.status(404).json({ message: "Profile not found" });

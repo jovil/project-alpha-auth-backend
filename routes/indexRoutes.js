@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("../model/userModel");
 
-router.get("/", (request, response, next) => {
+router.get("/", (request, response) => {
   User.find({})
     .then((data) => {
       response.json(data);
@@ -10,7 +10,6 @@ router.get("/", (request, response, next) => {
     .catch((error) => {
       response.status(408).json({ error });
     });
-  next();
 });
 
 module.exports = router;
