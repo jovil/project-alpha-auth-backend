@@ -24,9 +24,9 @@ router.post("/update-hasProducts/:userId", async (request, response) => {
 });
 
 // authentication endpoint
-router.get("/auth-endpoint", auth, async (request, response) => {
+router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   try {
-    const userId = request.user.userId;
+    const userId = request.params.userId;
     const profile = await Profile.findOne({ user: userId });
 
     if (!profile)
