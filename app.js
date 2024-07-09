@@ -6,7 +6,6 @@ const bodyParser = require("body-parser");
 const dbConnect = require("./db/dbConnect");
 const indexRoutes = require("./routes/indexRoutes");
 const authRoutes = require("./routes/authRoutes");
-const profileRoutes = require("./routes/profileRoutes");
 const productRoutes = require("./routes/productRoutes");
 const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -31,7 +30,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/", indexRoutes);
 app.use("/", authRoutes);
-app.use("/", profileRoutes);
 app.use("/", productRoutes);
 app.use("/", postRoutes);
 app.use("/", userRoutes);

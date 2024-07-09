@@ -3,7 +3,6 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
-const Profile = require("../model/profileModel");
 
 // register endpoint
 router.post("/register", async (request, response) => {
@@ -22,10 +21,6 @@ router.post("/register", async (request, response) => {
 
     // save the new user
     await newUser.save();
-
-    // Create a profile for the new user
-    const newProfile = new Profile({ user: newUser._id });
-    await newProfile.save();
 
     console.log("New user created:", newUser);
 
