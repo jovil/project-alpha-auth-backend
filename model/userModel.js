@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
     unique: true,
   },
   avatar: String,
-  hasProducts: { type: Boolean, default: false },
+  hasPosted: { type: Boolean, default: false },
 });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

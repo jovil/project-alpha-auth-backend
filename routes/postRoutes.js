@@ -61,7 +61,7 @@ router.post("/create", upload.single("image"), async (request, response) => {
 
 router.get("/posts", async (request, response) => {
   try {
-    const posts = await Post.find({}).populate("user", "hasProducts userName");
+    const posts = await Post.find({}).populate("user", "hasPosted userName");
 
     response.json(posts);
   } catch (error) {

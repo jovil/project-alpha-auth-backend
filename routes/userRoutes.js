@@ -14,12 +14,12 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-router.post("/update-hasProducts/:userId", async (request, response) => {
+router.post("/update-hasPosted/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const { hasProducts } = request.body;
+    const { hasPosted } = request.body;
     const user = await User.findByIdAndUpdate(userId, {
-      hasProducts: hasProducts,
+      hasPosted: hasPosted,
     });
 
     if (!user) {
