@@ -2,9 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const compression = require("compression");
 const bodyParser = require("body-parser");
-const AWS = require("aws-sdk");
-const multer = require("multer");
-const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 // require database connection
 const dbConnect = require("./db/dbConnect");
 const indexRoutes = require("./routes/indexRoutes");
