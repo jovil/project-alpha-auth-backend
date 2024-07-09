@@ -17,7 +17,7 @@ router.post("/register", async (request, response) => {
     const newUser = await new User({
       email: email,
       password: hashedPassword,
-      userName: request.body.userName,
+      userName: userName,
     });
 
     // save the new user
@@ -57,6 +57,7 @@ router.post("/register", async (request, response) => {
       _id: user._id,
       message: "Registration and Login Successful",
       email: user.email,
+      userName: user.userName,
       token,
     });
   } catch (error) {
