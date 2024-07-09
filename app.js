@@ -7,6 +7,8 @@ const jwt = require("jsonwebtoken");
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
+// require database connection
+const dbConnect = require("./db/dbConnect");
 const User = require("./model/userModel");
 const Profile = require("./model/profileModel");
 const Post = require("./model/postModel");
@@ -16,9 +18,6 @@ const timestamp = Date.now();
 
 const app = express();
 const s3 = new AWS.S3();
-
-// require database connection
-const dbConnect = require("./db/dbConnect");
 
 // execute database connection
 dbConnect();
@@ -248,27 +247,39 @@ app.post("/create", upload.single("image"), async (request, response) => {
   }
 });
 
+app.post("/update-hasProducts/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const { hasProducts } = request.body;
+    const user = await User.findByIdAndUpdate(userId, {
+      hasProducts: hasProducts,
+    });
+
+    if (!user) {
+      return response.status(404).json({ message: "User not found" });
+    }
+
+    console.log("Updated user:", user);
+    response.json(user);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/posts", async (request, response) => {
   try {
-    Post.find({})
-      .then((result) => {
-        response.json(result);
-      })
-      .catch((err) => {
-        console.error(err);
-        response
-          .status(500)
-          .json({ error: "An error occurred while retrieving posts" });
-      });
+    const posts = await Post.find({}).populate("user", "hasProducts");
+
+    response.json(posts);
   } catch (error) {
-    console.log("error", error);
+    response.status(500).json({ error: error.message });
   }
 });
 
 app.get("/products/:profileId", async (request, response) => {
   try {
     const { profileId } = request.params;
-    console.log("profileId", profileId);
+
     Product.find({ user: profileId })
       .then((result) => {
         response.json(result);

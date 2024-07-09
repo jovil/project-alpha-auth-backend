@@ -12,7 +12,9 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide a password!"],
     unique: false,
   },
+
+  hasProducts: { type: Boolean, default: false },
 });
 
-const User = mongoose.model.Users || mongoose.model("Users", UserSchema);
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 module.exports = User;

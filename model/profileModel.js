@@ -7,5 +7,5 @@ const ProfileSchema = new mongoose.Schema({
 });
 
 const Profile =
-  mongoose.model.Profiles || mongoose.model("Profiles", ProfileSchema);
+  mongoose.models.Profile || mongoose.model("Profile", ProfileSchema);
 module.exports = Profile;

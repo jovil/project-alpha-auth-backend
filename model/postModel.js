@@ -1,10 +1,15 @@
 const mongoose = require("mongoose");
 
-const postSchema = mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+const PostSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   email: String,
   fileUrl: String,
   caption: String,
 });
 
-module.exports = mongoose.model.Posts || mongoose.model("Posts", postSchema);
+const Post = mongoose.models.Post || mongoose.model("Post", PostSchema);
+module.exports = Post;
