@@ -27,7 +27,10 @@ router.post("/update-hasProducts/:userId", async (request, response) => {
 router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   try {
     const userId = request.params.userId;
-    const profile = await Profile.findOne({ user: userId });
+    const profile = await Profile.findOne({ user: userId }).populate(
+      "user",
+      "userName"
+    );
 
     if (!profile)
       return response.status(404).json({ message: "Profile not found" });
