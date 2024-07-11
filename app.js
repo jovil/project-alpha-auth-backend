@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
+const stripeRoutes = require("./routes/stripeRoutes");
 
 const app = express();
 
@@ -33,5 +34,6 @@ app.use("/", authRoutes);
 app.use("/", productRoutes);
 app.use("/", postRoutes);
 app.use("/", userRoutes);
+app.use("/", stripeRoutes);
 
 module.exports = app;
