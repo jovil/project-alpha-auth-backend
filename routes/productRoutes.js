@@ -13,7 +13,7 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFileToS3 = async (file) => {
+const uploadFilesToS3 = async (file) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
     Key: `${uuidv4()}-${timestamp}${file.originalname}`,
@@ -42,20 +42,22 @@ const saveProductToDatabase = async (product, fileUrl) => {
 
 router.post(
   "/create/product",
-  upload.single("image"),
+  upload.array("image", 4),
   async (request, response) => {
     try {
-      const file = request.file;
+      const files = request.files;
       const product = JSON.parse(request.body.product);
 
-      // Upload file to S3 and get the URL
-      const fileUrl = await uploadFileToS3(file);
+      // Upload files to S3 and get the URLs
+      const fileUrls = await Promise.all(
+        files.map((file) => uploadFilesToS3(file))
+      );
 
       // Save product metadata to the database
-      const savedProduct = await saveProductToDatabase(product, fileUrl);
+      const savedProduct = await saveProductToDatabase(product, fileUrls);
 
       response.send({
-        message: "File and product saved successfully",
+        message: "Files and product saved successfully",
         post: savedProduct,
       });
     } catch (error) {
