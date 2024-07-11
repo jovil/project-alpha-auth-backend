@@ -70,6 +70,11 @@ router.get("/products/:profileId", async (request, response) => {
   try {
     const { profileId } = request.params;
     const products = await Product.find({ user: profileId });
+
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "Products not found" });
+    }
+
     response.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
