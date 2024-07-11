@@ -79,7 +79,18 @@ router.get("/products/:profileId", async (request, response) => {
           .json({ error: "An error occurred while retrieving posts" });
       });
   } catch (error) {
-    console.log("error", error);
+    response.status(500).send(error);
+  }
+});
+
+router.get("/product/:productId", async (request, response) => {
+  try {
+    const { productId } = request.params;
+    const product = await Product.findById(productId);
+
+    response.json(product);
+  } catch (error) {
+    response.status(500).send(error);
   }
 });
 
