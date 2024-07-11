@@ -69,19 +69,11 @@ router.post(
 router.get("/products/:profileId", async (request, response) => {
   try {
     const { profileId } = request.params;
-
-    Product.find({ user: profileId })
-      .then((result) => {
-        response.json(result);
-      })
-      .catch((err) => {
-        console.error(err);
-        response
-          .status(500)
-          .json({ error: "An error occurred while retrieving posts" });
-      });
+    const products = await Product.find({ user: profileId });
+    response.json(products);
   } catch (error) {
-    response.status(500).send(error);
+    console.error("Error fetching products:", error);
+    response.status(500).json({ error: "Internal Server Error" });
   }
 });
 
