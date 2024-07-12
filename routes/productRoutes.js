@@ -24,7 +24,7 @@ const uploadFilesToS3 = async (files) => {
       };
 
       const uploadResult = await s3.upload(params).promise();
-      return uploadResult.Location; // S3 file URL
+      return { url: uploadResult.Location }; // S3 file URL
     })
   );
   return fileUrls;
@@ -45,12 +45,20 @@ const saveProductToDatabase = async (product, fileUrls) => {
   return newProduct;
 };
 
+// Define the fields to handle multiple file uploads with different names
+const uploadFields = [
+  { name: "images-1", maxCount: 1 },
+  { name: "images-2", maxCount: 1 },
+  { name: "images-3", maxCount: 1 },
+  { name: "images-4", maxCount: 1 },
+];
+
 router.post(
   "/create/product",
-  upload.array("images", 4),
+  upload.fields(uploadFields),
   async (request, response) => {
     try {
-      const files = request.files;
+      const files = Object.values(request.files).flat();
       const product = JSON.parse(request.body.product);
 
       // console.log("files", files);
