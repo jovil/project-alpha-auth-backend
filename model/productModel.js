@@ -2,10 +2,7 @@ const mongoose = require("mongoose");
 
 const ProductSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  fileUrl: {
-    type: [String],
-    required: true,
-  },
+  fileUrl: [{ type: String }],
   productName: String,
   productDescription: String,
   productPrice: String,
