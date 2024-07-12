@@ -75,7 +75,7 @@ router.get("/products/:profileId", async (request, response) => {
       return response.status(404).json({ message: "Products not found" });
     }
 
-    console.log("products", products);
+    console.log("Fetched products:", JSON.stringify(products, null, 2)); // Detailed logging
 
     response.json(products);
   } catch (error) {
