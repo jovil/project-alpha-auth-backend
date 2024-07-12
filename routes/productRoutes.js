@@ -72,8 +72,11 @@ router.get("/products/:profileId", async (request, response) => {
     const products = await Product.find({ user: profileId });
 
     if (!products || products.length === 0) {
-      return res.status(404).json({ message: "Products not found" });
+      return response.status(404).json({ message: "Products not found" });
     }
+
+    console.log("products", products);
+    console.log("1", process.env.DATABASE_URL);
 
     response.json(products);
   } catch (error) {
