@@ -13,26 +13,31 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFilesToS3 = async (file) => {
-  const params = {
-    Bucket: "jov-project-alpha-bucket",
-    Key: `${uuidv4()}-${timestamp}${file.originalname}`,
-    Body: file.buffer,
-    ContentType: file.mimetype,
-  };
+const uploadFilesToS3 = async (files) => {
+  const fileUrls = await Promise.all(
+    files.map(async (file) => {
+      const params = {
+        Bucket: "jov-project-alpha-bucket",
+        Key: `${uuidv4()}-${timestamp}${file.originalname}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
 
-  const uploadResult = await s3.upload(params).promise();
-  return uploadResult.Location; // S3 file URL
+      const uploadResult = await s3.upload(params).promise();
+      return uploadResult.Location; // S3 file URL
+    })
+  );
+  return fileUrls;
 };
 
-const saveProductToDatabase = async (product, fileUrl) => {
+const saveProductToDatabase = async (product, fileUrls) => {
   // Example using Mongoose with MongoDB
   const newProduct = new Product({
     user: product._id,
     productName: product.productName,
     productDescription: product.productDescription,
     productPrice: product.price,
-    fileUrl: fileUrl, // S3 file URL
+    fileUrl: fileUrls, // S3 file URL
     // other fields
   });
 
@@ -49,19 +54,15 @@ router.post(
       const product = JSON.parse(request.body.product);
 
       // Upload files to S3 and get the URLs
-      const fileUrls = await Promise.all(
-        files.map((file) => uploadFilesToS3(file))
-      );
+      const fileUrls = await uploadFilesToS3(files);
 
-      // Save product metadata to the database
-      const savedProduct = await saveProductToDatabase(product, fileUrls);
+      // Save product metadata to the database);
+      const newProduct = await saveProductToDatabase(product, fileUrls);
 
-      response.send({
-        message: "Files and product saved successfully",
-        post: savedProduct,
-      });
+      response.status(201).json(newProduct);
     } catch (error) {
-      response.status(500).send(error);
+      console.error("Error creating product:", error);
+      response.status(500).json({ error: "Internal Server Error" });
     }
   }
 );
