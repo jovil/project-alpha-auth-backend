@@ -76,7 +76,6 @@ router.get("/products/:profileId", async (request, response) => {
     }
 
     console.log("products", products);
-    console.log("1", process.env.DATABASE_URL);
 
     response.json(products);
   } catch (error) {
