@@ -53,10 +53,8 @@ router.post(
       const files = request.files;
       const product = JSON.parse(request.body.product);
 
-      // console.log("files", files);
       // Upload files to S3 and get the URLs
       const fileUrls = await uploadFilesToS3(files);
-      console.log("fileUrls", fileUrls);
 
       // Save product metadata to the database);
       const newProduct = await saveProductToDatabase(product, fileUrls);
@@ -77,8 +75,6 @@ router.get("/products/:profileId", async (request, response) => {
     if (!products || products.length === 0) {
       return response.status(404).json({ message: "Products not found" });
     }
-
-    console.log("Fetched products:", JSON.stringify(products, null, 2)); // Detailed logging
 
     response.json(products);
   } catch (error) {
