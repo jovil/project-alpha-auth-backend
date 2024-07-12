@@ -24,7 +24,7 @@ const uploadFilesToS3 = async (files) => {
       };
 
       const uploadResult = await s3.upload(params).promise();
-      return { url: uploadResult.Location }; // S3 file URL
+      return uploadResult.Location; // S3 file URL
     })
   );
   return fileUrls;
@@ -47,7 +47,7 @@ const saveProductToDatabase = async (product, fileUrls) => {
 
 router.post(
   "/create/product",
-  upload.array("image", 4),
+  upload.array("images", 4),
   async (request, response) => {
     try {
       const files = request.files;
