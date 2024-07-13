@@ -103,6 +103,7 @@ router.post("/login", (request, response) => {
             userName: user.userName,
             hasPosted: user.hasPosted,
             hasProducts: user.hasProducts,
+            avatar: user.avatar,
             token,
           });
         })

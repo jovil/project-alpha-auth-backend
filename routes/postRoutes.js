@@ -63,7 +63,7 @@ router.get("/posts", async (request, response) => {
   try {
     const posts = await Post.find({}).populate(
       "user",
-      "hasPosted userName hasProducts"
+      "hasPosted userName hasProducts avatar"
     );
 
     response.json(posts);
