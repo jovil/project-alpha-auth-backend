@@ -72,4 +72,18 @@ router.get("/posts", async (request, response) => {
   }
 });
 
+router.get("/posts/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const posts = await Post.find({ user: userId }).populate(
+      "user",
+      "userName avatar"
+    );
+
+    response.json(posts);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

@@ -94,4 +94,14 @@ router.get("/product/:productId", async (request, response) => {
   }
 });
 
+router.get("/products", async (request, response) => {
+  try {
+    const products = await Product.find({});
+
+    response.json(products);
+  } catch (error) {
+    response.status(500).send(error);
+  }
+});
+
 module.exports = router;
