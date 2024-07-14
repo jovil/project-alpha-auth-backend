@@ -10,6 +10,7 @@ const productRoutes = require("./routes/productRoutes");
 const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
 const stripeRoutes = require("./routes/stripeRoutes");
+const serieRoutes = require("./routes/serieRoutes");
 
 const app = express();
 
@@ -35,5 +36,6 @@ app.use("/", productRoutes);
 app.use("/", postRoutes);
 app.use("/", userRoutes);
 app.use("/", stripeRoutes);
+app.use("/", serieRoutes);
 
 module.exports = app;
