@@ -30,7 +30,8 @@ const savePostToDatabase = async (post, fileUrl) => {
   const newPost = new Post({
     user: post._id,
     email: post.email,
-    caption: post.caption,
+    characterName: post.characterName,
+    seriesTitle: post.seriesTitle,
     fileUrl: fileUrl, // S3 file URL
     // other fields
   });

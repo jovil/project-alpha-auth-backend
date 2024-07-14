@@ -8,7 +8,8 @@ const PostSchema = new mongoose.Schema({
   },
   email: String,
   fileUrl: String,
-  caption: String,
+  characterName: String,
+  seriesTitle: String,
 });
 
 const Post = mongoose.models.Post || mongoose.model("Post", PostSchema);
