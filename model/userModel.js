@@ -1,5 +1,20 @@
 const mongoose = require("mongoose");
 
+const BankAccountDetailsSchema = new mongoose.Schema({
+  accountHoldersName: {
+    type: String,
+    trim: true,
+  },
+  bankName: {
+    type: String,
+    trim: true,
+  },
+  accountNumber: {
+    type: Number,
+    trim: true,
+  },
+});
+
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -19,6 +34,9 @@ const UserSchema = new mongoose.Schema({
   avatar: { type: String, default: "" },
   hasPosted: { type: Boolean, default: false },
   hasProducts: { type: Boolean, default: false },
+  bankAccountDetails: {
+    type: BankAccountDetailsSchema,
+  },
 });
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);

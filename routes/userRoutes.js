@@ -119,4 +119,22 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
   }
 });
 
+router.post("/user/update/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const { name, bank, account } = request.body;
+
+    const user = await User.findByIdAndUpdate(userId, {
+      bankAccountDetails: {
+        accountHoldersName: name,
+        bankName: bank,
+        accountNumber: account,
+      },
+    });
+    response.json(user);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
