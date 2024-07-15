@@ -119,7 +119,7 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
   }
 });
 
-router.post("/user/update/:userId", async (request, response) => {
+router.post("/user/update/bankDetails/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
     const { name, bank, account } = request.body;
@@ -129,6 +129,52 @@ router.post("/user/update/:userId", async (request, response) => {
         accountHoldersName: name,
         bankName: bank,
         accountNumber: account,
+      },
+    });
+    response.json(user);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/user/update/hiringDetails/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const {
+      email,
+      whatsApp,
+      location,
+      favoriteCharacters,
+      services,
+      availability,
+      preferredSchedule,
+      travelAvailability,
+    } = request.body;
+
+    const user = await User.findByIdAndUpdate(userId, {
+      hiringDetails: {
+        email: email,
+        whatsApp: whatsApp,
+        location: location,
+        favoriteCharacters: favoriteCharacters,
+        services: {
+          costumeMaking: services.costumeMaking,
+          makeupAndOrProsthetics: services.makeupAndOrProsthetics,
+          performanceAndOrActing: services.performanceAndOrActing,
+          voiceActing: services.voiceActing,
+          photography: services.photography,
+          otherSkills: services.otherSkills,
+        },
+        availability: {
+          conventions: availability.conventions,
+          photoshoots: availability.photoshoots,
+          promotionalEvents: availability.promotionalEvents,
+          onlineAppearancesAndOrStreams:
+            availability.onlineAppearancesAndOrStreams,
+          otherAvailability: availability.otherAvailability,
+        },
+        preferredSchedule: preferredSchedule,
+        travelAvailability: travelAvailability,
       },
     });
     response.json(user);
