@@ -4,14 +4,17 @@ const BankAccountDetailsSchema = new mongoose.Schema({
   accountHoldersName: {
     type: String,
     trim: true,
+    default: undefined,
   },
   bankName: {
     type: String,
     trim: true,
+    default: undefined,
   },
   accountNumber: {
     type: Number,
     trim: true,
+    default: undefined,
   },
 });
 
@@ -36,6 +39,7 @@ const UserSchema = new mongoose.Schema({
   hasProducts: { type: Boolean, default: false },
   bankAccountDetails: {
     type: BankAccountDetailsSchema,
+    default: undefined,
   },
 });
 
