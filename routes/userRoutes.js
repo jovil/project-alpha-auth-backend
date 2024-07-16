@@ -153,8 +153,6 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
       travelAvailability,
     } = request.body;
 
-    console.log("email", email);
-
     const user = await User.findByIdAndUpdate(userId, {
       hiringDetails: {
         email: email,
