@@ -104,13 +104,6 @@ const UserSchema = new mongoose.Schema({
     },
     services: {
       type: [ServiceSchema],
-      default: [
-        { service: "Costume making", serviceAvailable: false },
-        { service: "Makeup and/or prosthetics", serviceAvailable: false },
-        { service: "Performance/Acting", serviceAvailable: false },
-        { service: "Voice acting", serviceAvailable: false },
-        { service: "Photography", serviceAvailable: false },
-      ],
     },
     otherServices: {
       type: String,
@@ -119,12 +112,6 @@ const UserSchema = new mongoose.Schema({
     },
     availability: {
       type: [AvailabilitySchema],
-      default: [
-        { availabilityName: "Conventions", isAvailable: false },
-        { availabilityName: "Photoshoots", isAvailable: false },
-        { availabilityName: "Promotional events", isAvailable: false },
-        { availabilityName: "Online appearances/streams", isAvailable: false },
-      ],
     },
     otherAvailability: {
       type: String,
