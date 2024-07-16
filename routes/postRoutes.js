@@ -62,10 +62,13 @@ router.post("/create", upload.single("image"), async (request, response) => {
 
 router.get("/posts", async (request, response) => {
   try {
-    const posts = await Post.find({}).populate(
-      "user",
-      "hasPosted userName hasProducts avatar"
-    );
+    const page = parseInt(request.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(request.query.limit) || 9; // Default to 12 posts per page if not provided
+
+    const posts = await Post.find({})
+      .populate("user", "hasPosted userName hasProducts avatar")
+      .skip((page - 1) * limit)
+      .limit(limit);
 
     response.json(posts);
   } catch (error) {
