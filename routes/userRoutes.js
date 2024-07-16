@@ -146,10 +146,14 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
       location,
       favoriteCharacters,
       services,
+      otherServices,
       availability,
+      otherAvailability,
       preferredSchedule,
       travelAvailability,
     } = request.body;
+
+    console.log("email", email);
 
     const user = await User.findByIdAndUpdate(userId, {
       hiringDetails: {
@@ -157,22 +161,16 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
         whatsApp: whatsApp,
         location: location,
         favoriteCharacters: favoriteCharacters,
-        services: {
-          costumeMaking: services.costumeMaking,
-          makeupAndOrProsthetics: services.makeupAndOrProsthetics,
-          performanceAndOrActing: services.performanceAndOrActing,
-          voiceActing: services.voiceActing,
-          photography: services.photography,
-          otherSkills: services.otherSkills,
-        },
-        availability: {
-          conventions: availability.conventions,
-          photoshoots: availability.photoshoots,
-          promotionalEvents: availability.promotionalEvents,
-          onlineAppearancesAndOrStreams:
-            availability.onlineAppearancesAndOrStreams,
-          otherAvailability: availability.otherAvailability,
-        },
+        services: services.map((service) => ({
+          service: service.service,
+          serviceAvailable: service.serviceAvailable,
+        })),
+        otherServices: otherServices,
+        availability: availability.map((available) => ({
+          availabilityName: available.availabilityName,
+          isAvailable: available.isAvailable,
+        })),
+        otherAvailability: otherAvailability,
         preferredSchedule: preferredSchedule,
         travelAvailability: travelAvailability,
       },

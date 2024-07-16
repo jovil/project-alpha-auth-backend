@@ -18,53 +18,25 @@ const BankAccountDetailsSchema = new mongoose.Schema({
   },
 });
 
-const ServicesSchema = new mongoose.Schema({
-  costumeMaking: {
-    type: Boolean,
-    default: false,
-  },
-  makeupAndOrProsthetics: {
-    type: Boolean,
-    default: false,
-  },
-  performanceAndOrActing: {
-    type: Boolean,
-    default: false,
-  },
-  voiceActing: {
-    type: Boolean,
-    default: false,
-  },
-  photography: {
-    type: Boolean,
-    default: false,
-  },
-  otherSkills: {
+const ServiceSchema = new mongoose.Schema({
+  service: {
     type: String,
-    default: undefined,
+    required: true,
+  },
+  serviceAvailable: {
+    type: Boolean,
+    default: false,
   },
 });
 
 const AvailabilitySchema = new mongoose.Schema({
-  conventions: {
-    type: Boolean,
-    default: false,
-  },
-  photoshoots: {
-    type: Boolean,
-    default: false,
-  },
-  promotionalEvents: {
-    type: Boolean,
-    default: false,
-  },
-  onlineAppearancesAndOrStreams: {
-    type: Boolean,
-    default: false,
-  },
-  otherAvailability: {
+  availabilityName: {
     type: String,
-    default: undefined,
+    required: true,
+  },
+  isAvailable: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -131,11 +103,32 @@ const UserSchema = new mongoose.Schema({
       default: undefined,
     },
     services: {
-      type: ServicesSchema,
+      type: [ServiceSchema],
+      default: [
+        { service: "Costume making", serviceAvailable: false },
+        { service: "Makeup and/or prosthetics", serviceAvailable: false },
+        { service: "Performance/Acting", serviceAvailable: false },
+        { service: "Voice acting", serviceAvailable: false },
+        { service: "Photography", serviceAvailable: false },
+      ],
+    },
+    otherServices: {
+      type: String,
+      trim: true,
       default: undefined,
     },
     availability: {
-      type: AvailabilitySchema,
+      type: [AvailabilitySchema],
+      default: [
+        { availabilityName: "Conventions", isAvailable: false },
+        { availabilityName: "Photoshoots", isAvailable: false },
+        { availabilityName: "Promotional events", isAvailable: false },
+        { availabilityName: "Online appearances/streams", isAvailable: false },
+      ],
+    },
+    otherAvailability: {
+      type: String,
+      trim: true,
       default: undefined,
     },
     travelAvailability: {
