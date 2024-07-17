@@ -50,12 +50,18 @@ router.post("/create", upload.single("image"), async (request, response) => {
 
     // Save post metadata to the database
     const savedPost = await savePostToDatabase(post, fileUrl);
+    // Populate the user field before sending the response
+    const populatedPost = await Post.findById(savedPost._id).populate(
+      "user",
+      "userName avatar hasProducts"
+    );
 
     response.send({
       message: "File and post saved successfully",
-      post: savedPost,
+      post: populatedPost,
     });
   } catch (error) {
+    console.log("Error creating post:", error);
     response.status(500).send(error);
   }
 });
