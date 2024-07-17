@@ -81,6 +81,10 @@ const UserSchema = new mongoose.Schema({
     type: BankAccountDetailsSchema,
     default: undefined,
   },
+  hasHiringDetails: {
+    type: Boolean,
+    default: false,
+  },
   hiringDetails: {
     email: {
       type: String,

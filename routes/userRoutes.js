@@ -151,9 +151,11 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
       otherAvailability,
       preferredSchedule,
       travelAvailability,
+      hasHiringDetails,
     } = request.body;
 
     const user = await User.findByIdAndUpdate(userId, {
+      hasHiringDetails: hasHiringDetails,
       hiringDetails: {
         email: email,
         whatsApp: whatsApp,
