@@ -67,6 +67,7 @@ router.get("/posts", async (request, response) => {
 
     const posts = await Post.find({})
       .populate("user", "hasPosted userName hasProducts avatar")
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 

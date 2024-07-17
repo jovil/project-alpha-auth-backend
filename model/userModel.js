@@ -58,78 +58,81 @@ const PreferredScheduleSchema = new mongoose.Schema({
   },
 });
 
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, "Please provide an Email!"],
-    unique: [true, "Email Exist"],
-  },
-  password: {
-    type: String,
-    required: [true, "Please provide a password!"],
-    unique: false,
-  },
-  userName: {
-    type: String,
-    required: [true, "Please provide a username!"],
-    unique: true,
-  },
-  avatar: { type: String, default: "" },
-  hasPosted: { type: Boolean, default: false },
-  hasProducts: { type: Boolean, default: false },
-  bankAccountDetails: {
-    type: BankAccountDetailsSchema,
-    default: undefined,
-  },
-  hasHiringDetails: {
-    type: Boolean,
-    default: false,
-  },
-  hiringDetails: {
+const UserSchema = new mongoose.Schema(
+  {
     email: {
       type: String,
-      trim: true,
-      default: undefined,
+      required: [true, "Please provide an Email!"],
+      unique: [true, "Email Exist"],
     },
-    whatsApp: {
-      type: Number,
-      trim: true,
-      default: undefined,
-    },
-    location: {
+    password: {
       type: String,
-      trim: true,
-      default: undefined,
+      required: [true, "Please provide a password!"],
+      unique: false,
     },
-    favoriteCharacters: {
+    userName: {
       type: String,
-      trim: true,
+      required: [true, "Please provide a username!"],
+      unique: true,
+    },
+    avatar: { type: String, default: "" },
+    hasPosted: { type: Boolean, default: false },
+    hasProducts: { type: Boolean, default: false },
+    bankAccountDetails: {
+      type: BankAccountDetailsSchema,
       default: undefined,
     },
-    services: {
-      type: [ServiceSchema],
+    hasHiringDetails: {
+      type: Boolean,
+      default: false,
     },
-    otherServices: {
-      type: String,
-      trim: true,
-      default: undefined,
-    },
-    availability: {
-      type: [AvailabilitySchema],
-    },
-    otherAvailability: {
-      type: String,
-      trim: true,
-      default: undefined,
-    },
-    travelAvailability: {
-      type: TravelAvailabilitySchema,
-    },
-    preferredSchedule: {
-      type: PreferredScheduleSchema,
+    hiringDetails: {
+      email: {
+        type: String,
+        trim: true,
+        default: undefined,
+      },
+      whatsApp: {
+        type: Number,
+        trim: true,
+        default: undefined,
+      },
+      location: {
+        type: String,
+        trim: true,
+        default: undefined,
+      },
+      favoriteCharacters: {
+        type: String,
+        trim: true,
+        default: undefined,
+      },
+      services: {
+        type: [ServiceSchema],
+      },
+      otherServices: {
+        type: String,
+        trim: true,
+        default: undefined,
+      },
+      availability: {
+        type: [AvailabilitySchema],
+      },
+      otherAvailability: {
+        type: String,
+        trim: true,
+        default: undefined,
+      },
+      travelAvailability: {
+        type: TravelAvailabilitySchema,
+      },
+      preferredSchedule: {
+        type: PreferredScheduleSchema,
+      },
     },
   },
-});
+  { timestamps: true }
+);
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
 module.exports = User;
