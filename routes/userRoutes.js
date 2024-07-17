@@ -78,6 +78,15 @@ router.get("/user/:userId", (request, response) => {
     });
 });
 
+router.get("/users/forHire", async (request, response) => {
+  try {
+    const usersForHire = await User.find({ hasHiringDetails: true });
+    response.json(usersForHire);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 const uploadFileToS3 = async (file) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
