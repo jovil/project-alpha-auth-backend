@@ -13,10 +13,12 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFileToS3 = async (file) => {
+const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${uuidv4()}-${timestamp}${file.originalname}`,
+    Key: `${userDetails.userName}/posts/${uuidv4()}-${timestamp}${
+      file.originalname
+    }`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -25,10 +27,10 @@ const uploadFileToS3 = async (file) => {
   return uploadResult.Location; // S3 file URL
 };
 
-const savePostToDatabase = async (post, fileUrl) => {
+const savePostToDatabase = async (post, userDetails, fileUrl) => {
   // Example using Mongoose with MongoDB
   const newPost = new Post({
-    user: post._id,
+    user: userDetails.userId,
     email: post.email,
     characterName: post.characterName,
     seriesTitle: post.seriesTitle,
@@ -44,12 +46,13 @@ router.post("/create", upload.single("image"), async (request, response) => {
   try {
     const file = request.file;
     const post = JSON.parse(request.body.post);
+    const userDetails = { userId: post._id, userName: post.userName };
 
     // Upload file to S3 and get the URL
-    const fileUrl = await uploadFileToS3(file);
+    const fileUrl = await uploadFileToS3(file, userDetails);
 
     // Save post metadata to the database
-    const savedPost = await savePostToDatabase(post, fileUrl);
+    const savedPost = await savePostToDatabase(post, userDetails, fileUrl);
     // Populate the user field before sending the response
     const populatedPost = await Post.findById(savedPost._id).populate(
       "user",

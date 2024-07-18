@@ -13,12 +13,14 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFilesToS3 = async (files) => {
+const uploadFilesToS3 = async (files, userDetails) => {
   const fileUrls = await Promise.all(
     files.map(async (file) => {
       const params = {
         Bucket: "jov-project-alpha-bucket",
-        Key: `${uuidv4()}-${timestamp}${file.originalname}`,
+        Key: `${userDetails.userName}/products/${uuidv4()}-${timestamp}${
+          file.originalname
+        }`,
         Body: file.buffer,
         ContentType: file.mimetype,
       };
@@ -30,10 +32,10 @@ const uploadFilesToS3 = async (files) => {
   return fileUrls;
 };
 
-const saveProductToDatabase = async (product, fileUrls) => {
+const saveProductToDatabase = async (product, userDetails, fileUrls) => {
   // Example using Mongoose with MongoDB
   const newProduct = new Product({
-    user: product._id,
+    user: userDetails.userId,
     productName: product.productName,
     productDescription: product.productDescription,
     productPrice: product.price,
@@ -52,12 +54,17 @@ router.post(
     try {
       const files = request.files;
       const product = JSON.parse(request.body.product);
+      const userDetails = { userId: product._id, userName: product.userName };
 
       // Upload files to S3 and get the URLs
-      const fileUrls = await uploadFilesToS3(files);
+      const fileUrls = await uploadFilesToS3(files, userDetails);
 
       // Save product metadata to the database);
-      const newProduct = await saveProductToDatabase(product, fileUrls);
+      const newProduct = await saveProductToDatabase(
+        product,
+        userDetails,
+        fileUrls
+      );
 
       response.status(201).json(newProduct);
     } catch (error) {
