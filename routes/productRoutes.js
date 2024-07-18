@@ -13,14 +13,14 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFilesToS3 = async (files, userDetails) => {
+const uploadFilesToS3 = async (files, userDetails, productName) => {
   const fileUrls = await Promise.all(
     files.map(async (file) => {
       const params = {
         Bucket: "jov-project-alpha-bucket",
-        Key: `${userDetails.userName}/products/${uuidv4()}-${timestamp}${
-          file.originalname
-        }`,
+        Key: `${
+          userDetails.userName
+        }/products/${productName}/${uuidv4()}-${timestamp}${file.originalname}`,
         Body: file.buffer,
         ContentType: file.mimetype,
       };
@@ -55,9 +55,10 @@ router.post(
       const files = request.files;
       const product = JSON.parse(request.body.product);
       const userDetails = { userId: product._id, userName: product.userName };
+      const productName = product.productName;
 
       // Upload files to S3 and get the URLs
-      const fileUrls = await uploadFilesToS3(files, userDetails);
+      const fileUrls = await uploadFilesToS3(files, userDetails, productName);
 
       // Save product metadata to the database);
       const newProduct = await saveProductToDatabase(
