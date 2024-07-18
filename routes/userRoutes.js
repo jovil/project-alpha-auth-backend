@@ -52,6 +52,24 @@ router.post("/update-hasProducts/:userId", async (request, response) => {
   }
 });
 
+router.post("/user/profileDescription", async (request, response) => {
+  try {
+    const { userId, profileDescription } = request.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        profileDescription: profileDescription,
+      },
+      { new: true } // This option returns the updated document
+    );
+
+    response.json(user);
+  } catch (error) {
+    console.log("error", error);
+    response.status(500).json({ error: error.message });
+  }
+});
+
 // authentication endpoint
 router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   try {

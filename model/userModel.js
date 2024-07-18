@@ -76,6 +76,11 @@ const UserSchema = new mongoose.Schema(
       unique: true,
     },
     avatar: { type: String, default: "" },
+    profileDescription: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     hasPosted: { type: Boolean, default: false },
     hasProducts: { type: Boolean, default: false },
     bankAccountDetails: {

@@ -104,6 +104,7 @@ router.post("/login", (request, response) => {
             hasPosted: user.hasPosted,
             hasProducts: user.hasProducts,
             avatar: user.avatar,
+            profileDescription: user.profileDescription,
             token,
           });
         })
