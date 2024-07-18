@@ -81,6 +81,11 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
+    shopDescription: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     hasPosted: { type: Boolean, default: false },
     hasProducts: { type: Boolean, default: false },
     bankAccountDetails: {

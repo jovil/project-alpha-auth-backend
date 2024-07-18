@@ -52,13 +52,33 @@ router.post("/update-hasProducts/:userId", async (request, response) => {
   }
 });
 
-router.post("/user/profileDescription", async (request, response) => {
+router.post("/user/profileDescription/:userId", async (request, response) => {
   try {
-    const { userId, profileDescription } = request.body;
+    const { userId } = request.params;
+    const { profileDescription } = request.body;
     const user = await User.findByIdAndUpdate(
       userId,
       {
         profileDescription: profileDescription,
+      },
+      { new: true } // This option returns the updated document
+    );
+
+    response.json(user);
+  } catch (error) {
+    console.log("error", error);
+    response.status(500).json({ error: error.message });
+  }
+});
+
+router.post("/user/shopDescription/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const { shopDescription } = request.body;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        shopDescription: shopDescription,
       },
       { new: true } // This option returns the updated document
     );
