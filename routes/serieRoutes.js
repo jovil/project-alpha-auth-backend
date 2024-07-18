@@ -15,4 +15,13 @@ router.get("/series/:seriesTitle", async (request, response) => {
   }
 });
 
+router.get("/series", async (request, response) => {
+  try {
+    const uniqueSeriesTitles = await Post.distinct("seriesTitle"); // Get unique series titles
+    response.json(uniqueSeriesTitles);
+  } catch (error) {
+    console.error("Error fetching unique series titles:", error);
+  }
+});
+
 module.exports = router;
