@@ -96,7 +96,7 @@ router.get("/product/:productId", async (request, response) => {
 
 router.get("/products", async (request, response) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({}).sort({ createdAt: -1 });
 
     response.json(products);
   } catch (error) {
