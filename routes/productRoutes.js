@@ -104,7 +104,9 @@ router.get("/product/:productId", async (request, response) => {
 
 router.get("/products", async (request, response) => {
   try {
-    const products = await Product.find({}).sort({ createdAt: -1 });
+    const products = await Product.find({})
+      .sort({ createdAt: -1 })
+      .populate("user", "userName avatar");
 
     response.json(products);
   } catch (error) {
