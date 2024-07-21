@@ -125,10 +125,12 @@ router.get("/users/forHire", async (request, response) => {
   }
 });
 
-const uploadFileToS3 = async (file) => {
+const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${uuidv4()}-${timestamp}${file.originalname}`,
+    Key: `${userDetails.userName}/avatar/${uuidv4()}-${timestamp}${
+      file.originalname
+    }`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -150,9 +152,10 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
   try {
     const file = request.file;
     const user = JSON.parse(request.body.user);
+    const userDetails = { userId: user._id, userName: user.userName };
 
     // Upload file to S3 and get the URL
-    const fileUrl = await uploadFileToS3(file);
+    const fileUrl = await uploadFileToS3(file, userDetails);
 
     // Save post metadata to the database
     const savedAvatar = await saveAvatarToDatabase(user, fileUrl);
