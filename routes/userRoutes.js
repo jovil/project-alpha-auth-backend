@@ -128,9 +128,7 @@ router.get("/users/forHire", async (request, response) => {
 const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${userDetails.userName}/avatar/${uuidv4()}-${timestamp}${
-      file.originalname
-    }`,
+    Key: `${userDetails.userName}/avatar/avatar`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -161,7 +159,7 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
     const savedAvatar = await saveAvatarToDatabase(user, fileUrl);
 
     response.send({
-      message: "File and post saved successfully",
+      message: "Image replaced successfully",
       post: savedAvatar,
     });
   } catch (error) {
