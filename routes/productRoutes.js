@@ -3,6 +3,7 @@ const router = express.Router();
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
+const sharp = require("sharp");
 const Product = require("../model/productModel");
 
 const s3 = new AWS.S3();
@@ -57,8 +58,33 @@ router.post(
       const userDetails = { userId: product._id, userName: product.userName };
       const productName = product.productName;
 
+      const processedFiles = await Promise.all(
+        files.map(async (file) => {
+          const newBuffer = await sharp(file.buffer)
+            .resize({
+              width: 1600,
+              fit: sharp.fit.inside, // Preserve aspect ratio
+              withoutEnlargement: true,
+            })
+            .toFormat("webp")
+            .webp({ quality: 60 })
+            .toBuffer();
+
+          return {
+            ...file,
+            originalname: file.originalname.replace(/\..*/, `.webp`),
+            buffer: newBuffer,
+            mimetype: "image/webp",
+          };
+        })
+      );
+
       // Upload files to S3 and get the URLs
-      const fileUrls = await uploadFilesToS3(files, userDetails, productName);
+      const fileUrls = await uploadFilesToS3(
+        processedFiles,
+        userDetails,
+        productName
+      );
 
       // Save product metadata to the database);
       const newProduct = await saveProductToDatabase(
