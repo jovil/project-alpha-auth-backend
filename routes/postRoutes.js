@@ -14,17 +14,14 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFileToS3 = async (file, compressedImage, userDetails) => {
+const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${
-      userDetails.userName
-    }/posts/${uuidv4()}-${timestamp}${file.originalname.replace(
-      /\..*/,
-      `.webp`
-    )}`,
-    Body: compressedImage,
-    ContentType: "image/webp",
+    Key: `${userDetails.userName}/posts/${uuidv4()}-${timestamp}-${
+      file.originalname
+    }`,
+    Body: file.buffer,
+    ContentType: file.mimetype,
   };
 
   const uploadResult = await s3.upload(params).promise();
@@ -54,13 +51,21 @@ router.post("/create", upload.single("image"), async (request, response) => {
     const { buffer } = file;
 
     const compressedImage = await sharp(buffer)
-      .resize({ width: 1600 })
+      .resize({
+        width: 1600,
+        fit: sharp.fit.inside, // Preserve aspect ratio
+        withoutEnlargement: true,
+      })
       .toFormat("webp")
       .webp({ quality: 60 })
       .toBuffer();
 
+    file.buffer = compressedImage;
+    file.originalname = file.originalname.replace(/\..*/, `.webp`);
+    file.mimetype = "image/webp";
+
     // Upload file to S3 and get the URL
-    const fileUrl = await uploadFileToS3(file, compressedImage, userDetails);
+    const fileUrl = await uploadFileToS3(file, userDetails);
 
     // Save post metadata to the database
     const savedPost = await savePostToDatabase(post, userDetails, fileUrl);
