@@ -3,6 +3,7 @@ const router = express.Router();
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
+const sharp = require("sharp");
 const Post = require("../model/postModel");
 
 const s3 = new AWS.S3();
@@ -13,14 +14,17 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-const uploadFileToS3 = async (file, userDetails) => {
+const uploadFileToS3 = async (file, compressedImage, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${userDetails.userName}/posts/${uuidv4()}-${timestamp}${
-      file.originalname
-    }`,
-    Body: file.buffer,
-    ContentType: file.mimetype,
+    Key: `${
+      userDetails.userName
+    }/posts/${uuidv4()}-${timestamp}${file.originalname.replace(
+      /\..*/,
+      `.webp`
+    )}`,
+    Body: compressedImage,
+    ContentType: "image/webp",
   };
 
   const uploadResult = await s3.upload(params).promise();
@@ -47,9 +51,15 @@ router.post("/create", upload.single("image"), async (request, response) => {
     const file = request.file;
     const post = JSON.parse(request.body.post);
     const userDetails = { userId: post._id, userName: post.userName };
+    const { buffer } = file;
+
+    const compressedImage = await sharp(buffer)
+      .toFormat("webp")
+      .webp({ quality: 20 })
+      .toBuffer();
 
     // Upload file to S3 and get the URL
-    const fileUrl = await uploadFileToS3(file, userDetails);
+    const fileUrl = await uploadFileToS3(file, compressedImage, userDetails);
 
     // Save post metadata to the database
     const savedPost = await savePostToDatabase(post, userDetails, fileUrl);
