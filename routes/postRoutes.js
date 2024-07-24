@@ -54,8 +54,9 @@ router.post("/create", upload.single("image"), async (request, response) => {
     const { buffer } = file;
 
     const compressedImage = await sharp(buffer)
+      .resize({ width: 1600 })
       .toFormat("webp")
-      .webp({ quality: 20 })
+      .webp({ quality: 60 })
       .toBuffer();
 
     // Upload file to S3 and get the URL
