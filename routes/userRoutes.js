@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require("../auth");
 const AWS = require("aws-sdk");
 const multer = require("multer");
-const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
+const sharp = require("sharp");
 const User = require("../model/userModel");
 
 const s3 = new AWS.S3();
@@ -128,7 +128,7 @@ router.get("/users/forHire", async (request, response) => {
 const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
-    Key: `${userDetails.userName}/avatar/avatar`,
+    Key: `${userDetails.userName}/avatar/avatar.webp`,
     Body: file.buffer,
     ContentType: file.mimetype,
   };
@@ -151,6 +151,21 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
     const file = request.file;
     const user = JSON.parse(request.body.user);
     const userDetails = { userId: user._id, userName: user.userName };
+    const { buffer } = file;
+
+    const compressedImage = await sharp(buffer)
+      .resize({
+        width: 200,
+        fit: sharp.fit.inside, // Preserve aspect ratio
+        withoutEnlargement: true,
+      })
+      .toFormat("webp")
+      .webp({ quality: 60 })
+      .toBuffer();
+
+    file.buffer = compressedImage;
+    file.originalname = file.originalname.replace(/\..*/, `.webp`);
+    file.mimetype = "image/webp";
 
     // Upload file to S3 and get the URL
     const fileUrl = await uploadFileToS3(file, userDetails);
