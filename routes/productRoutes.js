@@ -101,10 +101,10 @@ router.post(
   }
 );
 
-router.get("/products/:profileId", async (request, response) => {
+router.get("/products/:userId", async (request, response) => {
   try {
-    const { profileId } = request.params;
-    const products = await Product.find({ user: profileId });
+    const { userId } = request.params;
+    const products = await Product.find({ user: userId });
 
     if (!products || products.length === 0) {
       return response.status(404).json({ message: "Products not found" });

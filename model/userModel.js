@@ -97,6 +97,11 @@ const UserSchema = new mongoose.Schema(
       default: false,
     },
     hiringDetails: {
+      description: {
+        type: String,
+        trim: true,
+        default: "",
+      },
       email: {
         type: String,
         trim: true,

@@ -244,4 +244,28 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
   }
 });
 
+router.post(
+  "/user/update/hiringDescription/:userId",
+  async (request, response) => {
+    const { userId } = request.params;
+    const { hiringDescription } = request.body;
+
+    try {
+      const user = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            "hiringDetails.description": hiringDescription,
+          },
+        },
+        { new: true }
+      ); // This option ensures the updated document is returned);
+
+      response.json(user);
+    } catch (error) {
+      response.status(500).json({ error: error.message });
+    }
+  }
+);
+
 module.exports = router;
