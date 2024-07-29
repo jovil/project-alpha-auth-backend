@@ -104,11 +104,14 @@ router.post(
 router.get("/products/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const products = await Product.find({ user: userId });
+    const { limit } = request.query;
+    let query = Product.find({ user: userId }).sort({
+      createdAt: -1,
+    });
 
-    if (!products || products.length === 0) {
-      return response.status(404).json({ message: "Products not found" });
-    }
+    if (limit && limit > 0) query = query.limit(parseInt(limit));
+
+    const products = await query.exec(); // Execute the query
 
     response.json(products);
   } catch (error) {

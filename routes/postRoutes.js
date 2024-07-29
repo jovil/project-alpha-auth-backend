@@ -105,10 +105,14 @@ router.get("/posts", async (request, response) => {
 router.get("/posts/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const posts = await Post.find({ user: userId }).populate(
-      "user",
-      "userName avatar"
-    );
+    const { limit } = request.query;
+    let query = Post.find({ user: userId })
+      .populate("user", "userName avatar")
+      .sort({ createdAt: -1 });
+
+    if (limit && limit > 0) query = query.limit(parseInt(limit));
+
+    const posts = await query.exec(); // Execute the query
 
     response.json(posts);
   } catch (error) {
