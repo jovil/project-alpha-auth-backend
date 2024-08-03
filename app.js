@@ -11,6 +11,7 @@ const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
 const stripeRoutes = require("./routes/stripeRoutes");
 const serieRoutes = require("./routes/serieRoutes");
+const searchRoutes = require("./routes/searchRoutes");
 
 const app = express();
 
@@ -37,5 +38,6 @@ app.use("/", postRoutes);
 app.use("/", userRoutes);
 app.use("/", stripeRoutes);
 app.use("/", serieRoutes);
+app.use("/", searchRoutes);
 
 module.exports = app;
