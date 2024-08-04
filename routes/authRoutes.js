@@ -105,6 +105,8 @@ router.post("/login", (request, response) => {
             message: "Login Successful",
             email: user.email,
             userName: user.userName,
+            state: user.state,
+            city: user.city,
             hasProducts: user.hasProducts,
             hasHiringDetails: user.hasHiringDetails,
             avatar: user.avatar,
