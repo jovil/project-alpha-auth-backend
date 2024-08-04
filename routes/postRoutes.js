@@ -91,7 +91,7 @@ router.get("/posts", async (request, response) => {
     const limit = parseInt(request.query.limit) || 9; // Default to 12 posts per page if not provided
 
     const posts = await Post.find({})
-      .populate("user", "hasPosted userName hasProducts avatar")
+      .populate("user", "userName hasProducts avatar")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);

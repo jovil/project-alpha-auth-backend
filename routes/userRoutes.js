@@ -14,25 +14,6 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
-router.post("/update-hasPosted/:userId", async (request, response) => {
-  try {
-    const { userId } = request.params;
-    const { hasPosted } = request.body;
-    const user = await User.findByIdAndUpdate(userId, {
-      hasPosted: hasPosted,
-    });
-
-    if (!user) {
-      return response.status(404).json({ message: "User not found" });
-    }
-
-    console.log("Updated hasPosted:", user);
-    response.json(user);
-  } catch (error) {
-    response.status(500).json({ error: error.message });
-  }
-});
-
 router.post("/update-hasProducts/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
