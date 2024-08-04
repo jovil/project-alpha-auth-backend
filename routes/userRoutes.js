@@ -187,7 +187,6 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
     const {
       email,
       whatsApp,
-      location,
       favoriteCharacters,
       services,
       otherServices,
@@ -203,7 +202,6 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
       hiringDetails: {
         email: email,
         whatsApp: whatsApp,
-        location: location,
         favoriteCharacters: favoriteCharacters,
         services: services.map((service) => ({
           service: service.service,

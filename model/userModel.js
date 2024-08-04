@@ -113,11 +113,6 @@ const UserSchema = new mongoose.Schema(
         trim: true,
         default: undefined,
       },
-      location: {
-        type: String,
-        trim: true,
-        default: undefined,
-      },
       favoriteCharacters: {
         type: String,
         trim: true,
