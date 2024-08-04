@@ -168,13 +168,17 @@ router.post("/user/update/bankDetails/:userId", async (request, response) => {
     const { userId } = request.params;
     const { name, bank, account } = request.body;
 
-    const user = await User.findByIdAndUpdate(userId, {
-      bankAccountDetails: {
-        accountHoldersName: name,
-        bankName: bank,
-        accountNumber: account,
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        bankAccountDetails: {
+          accountHoldersName: name,
+          bankName: bank,
+          accountNumber: account,
+        },
       },
-    });
+      { new: true } // This ensures the updated document is returned;
+    );
     response.json(user);
   } catch (error) {
     response.status(500).json({ error: error.message });
