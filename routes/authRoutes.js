@@ -7,7 +7,7 @@ const User = require("../model/userModel");
 // register endpoint
 router.post("/register", async (request, response) => {
   try {
-    const { email, password, userName } = request.body;
+    const { email, password, userName, state, city } = request.body;
 
     // hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -17,6 +17,8 @@ router.post("/register", async (request, response) => {
       email: email,
       password: hashedPassword,
       userName: userName,
+      state: state,
+      city: city,
     });
 
     // save the new user
@@ -53,6 +55,8 @@ router.post("/register", async (request, response) => {
       message: "Registration and Login Successful",
       email: user.email,
       userName: user.userName,
+      state: user.state,
+      city: user.city,
       token,
     });
   } catch (error) {

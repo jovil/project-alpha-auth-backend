@@ -75,6 +75,8 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Please provide a username!"],
       unique: true,
     },
+    state: { type: String, default: "" },
+    city: { type: String, default: "" },
     avatar: { type: String, default: "" },
     profileDescription: {
       type: String,
