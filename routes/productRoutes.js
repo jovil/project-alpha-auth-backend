@@ -14,6 +14,32 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
+const deleteFileFromS3 = async (fileUrls) => {
+  const productFileUrlArr = fileUrls.split(",");
+  const fileKeys = productFileUrlArr.map((fileUrl) => {
+    // Extract the file key from the URL
+    const url = new URL(fileUrl);
+    return url.pathname.substring(1); // Remove leading '/'
+  });
+  const objects = fileKeys.map((key) => ({ Key: key }));
+
+  const params = {
+    Bucket: "jov-project-alpha-bucket",
+    Delete: {
+      Objects: objects,
+      Quiet: false, // Set to true to disable verbose mode
+    },
+  };
+
+  try {
+    const deleteResult = await s3.deleteObjects(params).promise();
+    console.log("Delete operation result:", deleteResult);
+  } catch (error) {
+    console.error("Error deleting files:", error);
+    throw error;
+  }
+};
+
 const uploadFilesToS3 = async (files, userDetails, productName) => {
   const fileUrls = await Promise.all(
     files.map(async (file) => {
@@ -105,9 +131,11 @@ router.get("/products/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
     const { limit } = request.query;
-    let query = Product.find({ user: userId }).sort({
-      createdAt: -1,
-    });
+    let query = Product.find({ user: userId })
+      .populate("user", "userName")
+      .sort({
+        createdAt: -1,
+      });
 
     if (limit && limit > 0) query = query.limit(parseInt(limit));
 
@@ -140,6 +168,23 @@ router.get("/products", async (request, response) => {
     response.json(products);
   } catch (error) {
     response.status(500).send(error);
+  }
+});
+
+router.delete("/products/delete/:productId", async (request, response) => {
+  const { productId } = request.params;
+  const fileUrls = request.query.fileUrl;
+
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    await deleteFileFromS3(fileUrls);
+
+    response.json({
+      message: "Product deleted successfully",
+      post: deletedProduct,
+    });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
   }
 });
 
