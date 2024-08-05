@@ -68,68 +68,54 @@ router.post("/register", async (request, response) => {
 });
 
 // login endpoint
-router.post("/login", (request, response) => {
+router.post("/login", async (request, response) => {
   const { email, password } = request.body;
-  // check if email exists
-  User.findOne({ email })
 
-    // if email exists
-    .then((user) => {
-      // compare the password entered and the hashed password found
-      bcrypt
-        .compare(password, user.password)
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email }).populate("productCount").exec();
 
-        // if the passwords match
-        .then((passwordCheck) => {
-          // check if password matches
-          if (!passwordCheck) {
-            return response.status(400).send({
-              message: "Passwords does not match",
-              error,
-            });
-          }
+    if (!user) {
+      return res.status(404).send({ message: "User not found" });
+    }
 
-          //   create JWT token
-          const token = jwt.sign(
-            {
-              userId: user._id,
-              userEmail: user.email,
-            },
-            "RANDOM-TOKEN",
-            { expiresIn: "24h" }
-          );
+    // Check the password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-          //   return success response
-          response.status(200).send({
-            _id: user._id,
-            message: "Login Successful",
-            email: user.email,
-            userName: user.userName,
-            state: user.state,
-            city: user.city,
-            hasProducts: user.hasProducts,
-            hasHiringDetails: user.hasHiringDetails,
-            avatar: user.avatar,
-            profileDescription: user.profileDescription,
-            shopDescription: user.shopDescription,
-            token,
-          });
-        })
-        // catch error if password does not match
-        .catch((error) => {
-          response.status(400).send({
-            message: "Passwords does not match",
-            error,
-          });
-        });
-    })
-    // catch error if email does not exist
-    .catch((e) => {
-      response.status(404).send({
-        message: "Email not found",
-        e,
-      });
+    if (!isPasswordValid) {
+      return res.status(401).send({ message: "Invalid password" });
+    }
+
+    //   create JWT token
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        userEmail: user.email,
+      },
+      "RANDOM-TOKEN",
+      { expiresIn: "24h" }
+    );
+
+    //   return success response
+    response.status(200).send({
+      _id: user._id,
+      message: "Login Successful",
+      email: user.email,
+      userName: user.userName,
+      state: user.state,
+      city: user.city,
+      hasProducts: user.hasProducts,
+      hasHiringDetails: user.hasHiringDetails,
+      avatar: user.avatar,
+      profileDescription: user.profileDescription,
+      shopDescription: user.shopDescription,
+      productCount: user.productCount,
+      token,
     });
+  } catch (error) {
+    console.error("Error during login:", error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = router;
