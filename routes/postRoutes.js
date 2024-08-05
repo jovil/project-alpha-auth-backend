@@ -14,6 +14,25 @@ const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
 
+const deleteFileFromS3 = async (fileUrl) => {
+  // Extract the file key from the URL
+  const url = new URL(fileUrl);
+  const fileKey = url.pathname.substring(1); // Remove leading '/'
+
+  const params = {
+    Bucket: "jov-project-alpha-bucket",
+    Key: fileKey,
+  };
+
+  try {
+    await s3.deleteObject(params).promise();
+    console.log(`File deleted successfully: ${fileKey}`);
+  } catch (error) {
+    console.error(`Error deleting file: ${fileKey}`, error);
+    throw error;
+  }
+};
+
 const uploadFileToS3 = async (file, userDetails) => {
   const params = {
     Bucket: "jov-project-alpha-bucket",
@@ -122,8 +141,11 @@ router.get("/posts/:userId", async (request, response) => {
 
 router.delete("/posts/delete/:postId", async (request, response) => {
   const { postId } = request.params;
+  const fileUrl = request.query.fileUrl;
+
   try {
     const deletedPost = await Post.findByIdAndDelete(postId);
+    await deleteFileFromS3(fileUrl);
 
     response.json({ message: "Post deleted successfully", post: deletedPost });
   } catch (error) {
