@@ -120,4 +120,15 @@ router.get("/posts/:userId", async (request, response) => {
   }
 });
 
+router.delete("/posts/delete/:postId", async (request, response) => {
+  const { postId } = request.params;
+  try {
+    const deletedPost = await Post.findByIdAndDelete(postId);
+
+    response.json({ message: "Post deleted successfully", post: deletedPost });
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
