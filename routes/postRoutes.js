@@ -5,7 +5,6 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const sharp = require("sharp");
 const Post = require("../model/postModel");
-
 const s3 = new AWS.S3();
 
 // Set up Multer
@@ -110,7 +109,15 @@ router.get("/posts", async (request, response) => {
     const limit = parseInt(request.query.limit) || 9; // Default to 12 posts per page if not provided
 
     const posts = await Post.find({})
-      .populate("user", "userName hasProducts avatar")
+      .populate({
+        path: "user",
+        select: "userName hasProducts avatar",
+        populate: {
+          path: "productCount",
+          options: { virtuals: true }, // Ensure virtual fields are included
+        },
+      })
+      .lean({ virtuals: true }) // Use lean to convert to plain JS object
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
