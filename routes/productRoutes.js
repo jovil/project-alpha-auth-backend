@@ -5,6 +5,7 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const sharp = require("sharp");
 const Product = require("../model/productModel");
+const User = require("../model/userModel");
 
 const s3 = new AWS.S3();
 
@@ -119,7 +120,15 @@ router.post(
         fileUrls
       );
 
-      response.status(201).json(newProduct);
+      // Get the updated user with product count
+      const updatedUser = await User.findById(userDetails.userId)
+        .populate({ path: "productCount" })
+        .lean({ virtuals: true });
+
+      response.status(201).json({
+        newProduct,
+        productCount: updatedUser.productCount,
+      });
     } catch (error) {
       console.error("Error creating product:", error);
       response.status(500).json({ error: "Internal Server Error" });
@@ -174,14 +183,21 @@ router.get("/products", async (request, response) => {
 router.delete("/products/delete/:productId", async (request, response) => {
   const { productId } = request.params;
   const fileUrls = request.query.fileUrl;
+  const userId = request.query.userId;
 
   try {
     const deletedProduct = await Product.findByIdAndDelete(productId);
     await deleteFileFromS3(fileUrls);
 
+    // Get the updated user with product count
+    const updatedUser = await User.findById(userId)
+      .populate({ path: "productCount" })
+      .lean({ virtuals: true });
+
     response.json({
       message: "Product deleted successfully",
       post: deletedProduct,
+      productCount: updatedUser.productCount,
     });
   } catch (error) {
     response.status(500).json({ error: error.message });

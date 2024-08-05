@@ -145,5 +145,17 @@ const UserSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Create a virtual field 'productCount'
+UserSchema.virtual("productCount", {
+  ref: "Product",
+  localField: "_id",
+  foreignField: "user",
+  count: true, // Only get the number of docs
+});
+
+// Ensure virtual fields are serialized
+UserSchema.set("toObject", { virtuals: true });
+UserSchema.set("toJSON", { virtuals: true });
+
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
 module.exports = User;

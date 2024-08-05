@@ -86,15 +86,15 @@ router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   }
 });
 
-router.get("/user/:userId", (request, response) => {
-  const { userId } = request.params;
-  User.findById(userId)
-    .then((data) => {
-      response.json(data);
-    })
-    .catch((error) => {
-      response.status(408).json({ error });
-    });
+router.get("/user/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const user = await User.findById(userId).populate("productCount").exec();
+
+    response.json(user);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
 });
 
 router.get("/users/forHire", async (request, response) => {
