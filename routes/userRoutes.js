@@ -5,7 +5,6 @@ const AWS = require("aws-sdk");
 const multer = require("multer");
 const sharp = require("sharp");
 const User = require("../model/userModel");
-
 const s3 = new AWS.S3();
 
 // Set up Multer
@@ -13,25 +12,6 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 const timestamp = Date.now();
-
-router.post("/update-hasProducts/:userId", async (request, response) => {
-  try {
-    const { userId } = request.params;
-    const { hasProducts } = request.body;
-    const user = await User.findByIdAndUpdate(userId, {
-      hasProducts: hasProducts,
-    });
-
-    if (!user) {
-      return response.status(404).json({ message: "User not found" });
-    }
-
-    console.log("Updated hasProducts:", user);
-    response.json(user);
-  } catch (error) {
-    response.status(500).json({ error: error.message });
-  }
-});
 
 router.post("/user/profileDescription/:userId", async (request, response) => {
   try {

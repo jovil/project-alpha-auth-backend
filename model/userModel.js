@@ -88,7 +88,6 @@ const UserSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
-    hasProducts: { type: Boolean, default: false },
     bankAccountDetails: {
       type: BankAccountDetailsSchema,
       default: undefined,

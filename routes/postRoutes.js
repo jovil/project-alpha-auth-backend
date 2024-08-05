@@ -90,7 +90,7 @@ router.post("/create", upload.single("image"), async (request, response) => {
     // Populate the user field before sending the response
     const populatedPost = await Post.findById(savedPost._id).populate(
       "user",
-      "userName avatar hasProducts"
+      "userName avatar"
     );
 
     response.send({
@@ -111,7 +111,7 @@ router.get("/posts", async (request, response) => {
     const posts = await Post.find({})
       .populate({
         path: "user",
-        select: "userName hasProducts avatar",
+        select: "userName avatar",
         populate: {
           path: "productCount",
           options: { virtuals: true }, // Ensure virtual fields are included

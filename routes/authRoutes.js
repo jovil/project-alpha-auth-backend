@@ -104,7 +104,6 @@ router.post("/login", async (request, response) => {
       userName: user.userName,
       state: user.state,
       city: user.city,
-      hasProducts: user.hasProducts,
       hasHiringDetails: user.hasHiringDetails,
       avatar: user.avatar,
       profileDescription: user.profileDescription,
