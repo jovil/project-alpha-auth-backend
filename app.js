@@ -12,6 +12,7 @@ const userRoutes = require("./routes/userRoutes");
 const stripeRoutes = require("./routes/stripeRoutes");
 const serieRoutes = require("./routes/serieRoutes");
 const searchRoutes = require("./routes/searchRoutes");
+const invitationRoutes = require("./routes/invitationRoutes");
 
 const app = express();
 
@@ -39,5 +40,6 @@ app.use("/", userRoutes);
 app.use("/", stripeRoutes);
 app.use("/", serieRoutes);
 app.use("/", searchRoutes);
+app.use("/", invitationRoutes);
 
 module.exports = app;

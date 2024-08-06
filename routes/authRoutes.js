@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const validateInvitation = require("../middlewares/validateInvitation");
 const User = require("../model/userModel");
 
 // register endpoint
-router.post("/register", async (request, response) => {
+router.post("/register", validateInvitation, async (request, response) => {
   try {
     const { email, password, userName, state, city } = request.body;
 
@@ -23,6 +24,10 @@ router.post("/register", async (request, response) => {
 
     // save the new user
     await newUser.save();
+
+    // Mark invitation as used
+    request.invitation.status = "used";
+    await request.invitation.save();
 
     console.log("New user created:", newUser);
 
