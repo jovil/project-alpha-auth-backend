@@ -146,9 +146,9 @@ const UserSchema = new mongoose.Schema(
 
 // Create a virtual field 'productCount'
 UserSchema.virtual("productCount", {
-  ref: "Product",
-  localField: "_id",
-  foreignField: "user",
+  ref: "Product", // Reference to the Product model
+  localField: "_id", // User _id field is matched with Product user field
+  foreignField: "user", // Field in Product model that refers to User
   count: true, // Only get the number of docs
 });
 
