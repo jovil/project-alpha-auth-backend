@@ -13,6 +13,7 @@ const stripeRoutes = require("./routes/stripeRoutes");
 const serieRoutes = require("./routes/serieRoutes");
 const searchRoutes = require("./routes/searchRoutes");
 const invitationRoutes = require("./routes/invitationRoutes");
+const waitingListRoutes = require("./routes/waitingListRoutes");
 
 const app = express();
 
@@ -41,5 +42,6 @@ app.use("/", stripeRoutes);
 app.use("/", serieRoutes);
 app.use("/", searchRoutes);
 app.use("/", invitationRoutes);
+app.use("/", waitingListRoutes);
 
 module.exports = app;
