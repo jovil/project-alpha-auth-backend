@@ -81,14 +81,14 @@ router.post("/login", async (request, response) => {
     const user = await User.findOne({ email }).populate("productCount").exec();
 
     if (!user) {
-      return res.status(404).send({ message: "User not found" });
+      return response.status(404).send({ message: "User not found" });
     }
 
     // Check the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res.status(401).send({ message: "Invalid password" });
+      return response.status(401).send({ message: "Invalid password" });
     }
 
     //   create JWT token
