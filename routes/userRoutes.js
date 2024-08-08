@@ -169,7 +169,6 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
     const {
-      email,
       whatsApp,
       favoriteCharacters,
       services,
@@ -184,7 +183,6 @@ router.post("/user/update/hiringDetails/:userId", async (request, response) => {
     const user = await User.findByIdAndUpdate(userId, {
       hasHiringDetails: hasHiringDetails,
       hiringDetails: {
-        email: email,
         whatsApp: whatsApp,
         favoriteCharacters: favoriteCharacters,
         services: services.map((service) => ({
