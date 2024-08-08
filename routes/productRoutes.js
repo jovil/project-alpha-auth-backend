@@ -3,7 +3,7 @@ const router = express.Router();
 const AWS = require("aws-sdk");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
-const sharp = require("sharp");
+const sharp = require("sharp"); // Image processing that allows you to resize, convert, and manipulate images
 const Product = require("../model/productModel");
 const User = require("../model/userModel");
 
@@ -88,6 +88,7 @@ router.post(
       const processedFiles = await Promise.all(
         files.map(async (file) => {
           const newBuffer = await sharp(file.buffer)
+            .rotate() // This will use the EXIF orientation information to rotate the image correctly
             .resize({
               width: 1600,
               fit: sharp.fit.inside, // Preserve aspect ratio
@@ -120,13 +121,19 @@ router.post(
         fileUrls
       );
 
+      // Populate user field in the new product
+      const populatedProduct = await Product.findById(newProduct._id).populate(
+        "user",
+        "userName avatar"
+      );
+
       // Get the updated user with product count
       const updatedUser = await User.findById(userDetails.userId)
         .populate({ path: "productCount" })
         .lean({ virtuals: true });
 
       response.status(201).json({
-        newProduct,
+        newProduct: populatedProduct,
         productCount: updatedUser.productCount,
       });
     } catch (error) {

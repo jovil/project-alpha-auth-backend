@@ -97,6 +97,8 @@ const UserSchema = new mongoose.Schema(
       default: false,
     },
     hiringDetails: {
+      headline: String,
+      subheading: String,
       description: {
         type: String,
         trim: true,
