@@ -69,7 +69,9 @@ router.get("/auth-endpoint/:userId", auth, async (request, response) => {
 router.get("/user/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const user = await User.findById(userId).populate("productCount").exec();
+    const user = await User.findById(userId)
+      .populate("productCount postCount")
+      .exec();
 
     response.json(user);
   } catch (error) {

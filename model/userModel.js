@@ -151,6 +151,13 @@ UserSchema.virtual("productCount", {
   count: true, // Only get the number of docs
 });
 
+UserSchema.virtual("postCount", {
+  ref: "Post",
+  localField: "_id",
+  foreignField: "user",
+  count: true,
+});
+
 // Ensure virtual fields are serialized
 UserSchema.set("toObject", { virtuals: true });
 UserSchema.set("toJSON", { virtuals: true });
