@@ -143,6 +143,30 @@ router.post("/uploads", upload.single("avatar"), async (request, response) => {
   }
 });
 
+router.post("/user/update/userDetails/:userId", async (request, response) => {
+  try {
+    const { userId } = request.params;
+    const { email, userName, role, talents, state, city } = request.body;
+    const newTalentArr = talents.split(",").map((item) => item.trim());
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        email,
+        userName,
+        role,
+        talents: newTalentArr,
+        state,
+        city,
+      },
+      { new: true } // This ensures the updated document is returned;
+    );
+    response.json(updatedUser);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/user/update/bankDetails/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
