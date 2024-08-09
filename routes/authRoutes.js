@@ -8,7 +8,9 @@ const User = require("../model/userModel");
 // register endpoint
 router.post("/register", validateInvitation, async (request, response) => {
   try {
-    const { email, password, userName, state, city } = request.body;
+    const { email, password, userName, state, city, role, talents } =
+      request.body;
+    const newTalentArr = talents.split(",").map((item) => item.trim());
 
     // hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -20,6 +22,8 @@ router.post("/register", validateInvitation, async (request, response) => {
       userName: userName,
       state: state,
       city: city,
+      role: role,
+      talents: newTalentArr,
     });
 
     // save the new user
@@ -62,6 +66,8 @@ router.post("/register", validateInvitation, async (request, response) => {
       userName: user.userName,
       state: user.state,
       city: user.city,
+      role: user.role,
+      talents: user.talents,
       token,
     });
   } catch (error) {
@@ -109,6 +115,8 @@ router.post("/login", async (request, response) => {
       userName: user.userName,
       state: user.state,
       city: user.city,
+      role: user.role,
+      talents: user.talents,
       hasHiringDetails: user.hasHiringDetails,
       avatar: user.avatar,
       profileDescription: user.profileDescription,
