@@ -22,8 +22,10 @@ router.post("/register", validateInvitation, async (request, response) => {
       userName: userName,
       state: state,
       city: city,
-      role: role,
-      talents: newTalentArr,
+      talentProfile: {
+        role: role,
+        talents: newTalentArr,
+      },
     });
 
     // save the new user
@@ -66,8 +68,10 @@ router.post("/register", validateInvitation, async (request, response) => {
       userName: user.userName,
       state: user.state,
       city: user.city,
-      role: user.role,
-      talents: user.talents,
+      talentProfile: {
+        role: user.role,
+        talents: user.talents,
+      },
       token,
     });
   } catch (error) {
@@ -84,7 +88,9 @@ router.post("/login", async (request, response) => {
 
   try {
     // Find the user by email
-    const user = await User.findOne({ email }).populate("productCount").exec();
+    const user = await User.findOne({ email })
+      .populate("productCount postCount")
+      .exec();
 
     if (!user) {
       return response.status(404).send({ message: "User not found" });
@@ -115,13 +121,17 @@ router.post("/login", async (request, response) => {
       userName: user.userName,
       state: user.state,
       city: user.city,
-      role: user.role,
-      talents: user.talents,
-      hasHiringDetails: user.hasHiringDetails,
+      talentProfileActive: user.talentProfileActive,
+      talentProfile: {
+        role: user.role,
+        talents: user.talents,
+      },
       avatar: user.avatar,
       profileDescription: user.profileDescription,
       shopDescription: user.shopDescription,
       productCount: user.productCount,
+      postCount: user.postCount,
+      hiringDetails: user.hiringDetails,
       token,
     });
   } catch (error) {

@@ -75,11 +75,16 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Please provide a username!"],
       unique: true,
     },
-    role: { type: String, default: "" },
-    talents: { type: [String], default: [""] },
     state: { type: String, default: "" },
     city: { type: String, default: "" },
     avatar: { type: String, default: "" },
+    talentProfileActive: { type: Boolean, default: false },
+    talentProfile: {
+      title: { type: String },
+      description: { type: String },
+      role: { type: String, default: "" },
+      talents: { type: [String], default: [""] },
+    },
     profileDescription: {
       type: String,
       trim: true,
@@ -93,10 +98,6 @@ const UserSchema = new mongoose.Schema(
     bankAccountDetails: {
       type: BankAccountDetailsSchema,
       default: undefined,
-    },
-    hasHiringDetails: {
-      type: Boolean,
-      default: false,
     },
     hiringDetails: {
       headline: String,

@@ -51,6 +51,25 @@ router.post("/user/shopDescription/:userId", async (request, response) => {
   }
 });
 
+router.post("/user/toggle/talentProfile/:userId", async (request, response) => {
+  const { userId } = request.params;
+  const talentProfileActive = request.body.talentProfileActive;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        talentProfileActive,
+      },
+      { new: true }
+    ); // This option returns the updated document);
+
+    response.json(user.talentProfileActive);
+  } catch (error) {
+    response.status(500).json({ error: error.message });
+  }
+});
+
 // authentication endpoint
 router.get("/auth-endpoint/:userId", auth, async (request, response) => {
   try {
@@ -81,7 +100,9 @@ router.get("/user/:userId", async (request, response) => {
 
 router.get("/users/forHire", async (request, response) => {
   try {
-    const usersForHire = await User.find({ hasHiringDetails: true });
+    const usersForHire = await User.find({ talentProfileActive: true }).sort({
+      createdAt: -1,
+    });
     response.json(usersForHire);
   } catch (error) {
     response.status(500).json({ error: error.message });
@@ -156,10 +177,12 @@ router.post("/user/update/userDetails/:userId", async (request, response) => {
       {
         email,
         userName,
-        role,
-        talents: newTalentArr,
         state,
         city,
+        talentProfile: {
+          role,
+          talents: newTalentArr,
+        },
       },
       { new: true } // This ensures the updated document is returned;
     );
@@ -194,41 +217,23 @@ router.post("/user/update/bankDetails/:userId", async (request, response) => {
 router.post("/user/update/hiringDetails/:userId", async (request, response) => {
   try {
     const { userId } = request.params;
-    const {
-      headline,
-      subheading,
-      whatsApp,
-      favoriteCharacters,
-      services,
-      otherServices,
-      availability,
-      otherAvailability,
-      preferredSchedule,
-      travelAvailability,
-      hasHiringDetails,
-    } = request.body;
+    const { talentProfile } = request.body;
+    const newTalentArr = talentProfile.talents
+      .split(",")
+      .map((item) => item.trim());
 
-    const user = await User.findByIdAndUpdate(userId, {
-      hasHiringDetails: hasHiringDetails,
-      hiringDetails: {
-        headline,
-        subheading,
-        whatsApp: whatsApp,
-        favoriteCharacters: favoriteCharacters,
-        services: services.map((service) => ({
-          service: service.service,
-          serviceAvailable: service.serviceAvailable,
-        })),
-        otherServices: otherServices,
-        availability: availability.map((available) => ({
-          availabilityName: available.availabilityName,
-          isAvailable: available.isAvailable,
-        })),
-        otherAvailability: otherAvailability,
-        preferredSchedule: preferredSchedule,
-        travelAvailability: travelAvailability,
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        talentProfile: {
+          title: talentProfile.title,
+          description: talentProfile.description,
+          role: talentProfile.role,
+          talents: newTalentArr,
+        },
       },
-    });
+      { new: true } // This ensures the updated document is returned;
+    );
     response.json(user);
   } catch (error) {
     response.status(500).json({ error: error.message });
