@@ -9,8 +9,8 @@ const PostSchema = new mongoose.Schema(
     },
     email: String,
     fileUrl: String,
-    characterName: String,
-    seriesTitle: String,
+    title: String,
+    description: String,
   },
   { timestamps: true }
 );

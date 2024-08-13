@@ -51,8 +51,8 @@ const savePostToDatabase = async (post, userDetails, fileUrl) => {
   const newPost = new Post({
     user: userDetails.userId,
     email: post.email,
-    characterName: post.characterName,
-    seriesTitle: post.seriesTitle,
+    title: post.title,
+    description: post.description,
     fileUrl: fileUrl, // S3 file URL
     // other fields
   });
@@ -88,10 +88,14 @@ router.post("/create", upload.single("image"), async (request, response) => {
     // Save post metadata to the database
     const savedPost = await savePostToDatabase(post, userDetails, fileUrl);
     // Populate the user field before sending the response
-    const populatedPost = await Post.findById(savedPost._id).populate(
-      "user",
-      "userName avatar"
-    );
+    const populatedPost = await Post.findById(savedPost._id).populate({
+      path: "user",
+      select: "userName avatar",
+      populate: {
+        path: "productCount",
+        options: { virtuals: true }, // Ensure virtual fields are included
+      },
+    });
 
     response.send({
       message: "File and post saved successfully",
