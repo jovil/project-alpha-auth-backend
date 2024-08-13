@@ -5,6 +5,7 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const sharp = require("sharp");
 const Post = require("../model/postModel");
+const User = require("../model/userModel");
 const s3 = new AWS.S3();
 
 // Set up Multer
@@ -153,12 +154,22 @@ router.get("/posts/:userId", async (request, response) => {
 router.delete("/posts/delete/:postId", async (request, response) => {
   const { postId } = request.params;
   const fileUrl = request.query.fileUrl;
+  const userId = request.query.userId;
 
   try {
     const deletedPost = await Post.findByIdAndDelete(postId);
     await deleteFileFromS3(fileUrl);
 
-    response.json({ message: "Post deleted successfully", post: deletedPost });
+    // Get the updated user with post count
+    const updatedUser = await User.findById(userId)
+      .populate({ path: "postCount" })
+      .lean({ virtuals: true });
+
+    response.json({
+      message: "Post deleted successfully",
+      post: deletedPost,
+      postCount: updatedUser.postCount,
+    });
   } catch (error) {
     response.status(500).json({ error: error.message });
   }
