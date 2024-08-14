@@ -7,10 +7,10 @@ const PostSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    email: String,
     fileUrl: String,
     title: String,
     description: String,
+    tags: [String],
   },
   { timestamps: true }
 );

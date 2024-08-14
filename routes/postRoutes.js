@@ -51,9 +51,9 @@ const savePostToDatabase = async (post, userDetails, fileUrl) => {
   // Example using Mongoose with MongoDB
   const newPost = new Post({
     user: userDetails.userId,
-    email: post.email,
     title: post.title,
     description: post.description,
+    tags: post.tags,
     fileUrl: fileUrl, // S3 file URL
     // other fields
   });
