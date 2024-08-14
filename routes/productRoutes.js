@@ -67,6 +67,7 @@ const saveProductToDatabase = async (product, userDetails, fileUrls) => {
     productName: product.productName,
     productDescription: product.productDescription,
     productPrice: product.price,
+    tags: product.tags,
     fileUrl: fileUrls, // S3 file URL
     // other fields
   });

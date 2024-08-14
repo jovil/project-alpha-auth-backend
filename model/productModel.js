@@ -8,6 +8,7 @@ const ProductSchema = new mongoose.Schema(
     productDescription: String,
     productPrice: String,
     paymentLink: String,
+    tags: [String],
   },
   { timestamps: true }
 );
