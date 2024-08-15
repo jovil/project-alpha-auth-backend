@@ -149,7 +149,7 @@ router.get("/products/:userId", async (request, response) => {
     const { userId } = request.params;
     const { limit } = request.query;
     let query = Product.find({ user: userId })
-      .populate("user", "userName")
+      .populate("user", "userName avatar")
       .sort({
         createdAt: -1,
       });
